@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="th" class="h-full bg-slate-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Rat Trap Monitor - ระบบควบคุมจุดตรวจกรงดักหนู 63 จุด</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Sarabun for Thai compatibility -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for beautiful real-time analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+        }
+        /* Custom scrollbar for modern sleek dark interface */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-100 flex flex-col antialiased">
+
+    <!-- Top Header Navigation -->
+    <header class="bg-slate-800/90 border-b border-slate-700/50 sticky top-0 z-40 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Brand Logo & Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-gradient-to-tr from-amber-500 to-rose-500 p-2.5 rounded-xl shadow-lg shadow-rose-500/10 flex items-center justify-center animate-pulse">
+                        <i class="fa-solid fa-shrimp text-slate-900 text-xl hidden"></i>
+                        <svg class="w-6 h-6 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold bg-gradient-to-r from-amber-200 via-rose-300 to-indigo-300 bg-clip-text text-transparent leading-none">
+                            RAT TRAP MONITOR
+                        </h1>
+                        <span class="text-xs text-slate-400 font-medium tracking-wider">ระบบบริหารจัดการกรงดักหนู 63 จุด</span>
+                    </div>
+                </div>
+
+                <!-- Date Selector and Quick Action -->
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                            <i class="fa-regular fa-calendar-days"></i>
+                        </span>
+                        <input type="date" id="inspectionDate" 
+                               class="bg-slate-900/80 border border-slate-700 text-sm rounded-xl focus:ring-rose-500 focus:border-rose-500 block pl-10 pr-3 py-2 text-slate-100 font-semibold cursor-pointer shadow-inner focus:outline-none transition-all w-40 sm:w-48">
+                    </div>
+                    
+                    <button id="btnSync" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-700/50 rounded-xl transition duration-200 text-slate-300 hover:text-emerald-400" title="ซิงค์ข้อมูลใหม่">
+                        <i class="fa-solid fa-rotate animate-spin-hover" id="syncIcon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Grid Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 overflow-y-auto">
+        
+        <!-- Live Statistics Grid Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            
+            <!-- Card 1: Inspection Completion Progress -->
+            <div class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/40 shadow-xl flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">ตรวจเช็คแล้ว</span>
+                    <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold" id="badgeCompletionPercent">0%</span>
+                </div>
+                <div class="mt-4 flex items-baseline space-x-2">
+                    <span class="text-3xl font-extrabold text-slate-100 tracking-tight" id="lblInspectedCount">0</span>
+                    <span class="text-slate-400 text-sm">/ 63 จุด</span>
+                </div>
+                <!-- Mini Progress Bar -->
+                <div class="w-full bg-slate-700 rounded-full h-1.5 mt-3 overflow-hidden">
+                    <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full transition-all duration-500" id="progressCompletion" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Card 2: Caught Rats Count -->
+            <div class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/40 shadow-xl flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">พบหนู (ตัว)</span>
+                    <span class="text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold" id="badgeCaughtAlert">ปกติ</span>
+                </div>
+                <div class="mt-4 flex items-baseline space-x-2">
+                    <span class="text-3xl font-extrabold text-rose-500 tracking-tight" id="lblTotalRats">0</span>
+                    <span class="text-slate-400 text-sm">ตัววันนี้</span>
+                </div>
+                <div class="mt-2 text-xs text-slate-400 flex items-center space-x-1">
+                    <i class="fa-solid fa-triangle-exclamation text-rose-400/80 animate-bounce"></i>
+                    <span id="lblCaughtStationsCount">จากทั้งหมด 0 จุดตรวจ</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Safe Stations (Inspected with 0 rat) -->
+            <div class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/40 shadow-xl flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">สถานะปกติ</span>
+                    <span class="text-slate-400 bg-slate-700/50 px-2 py-0.5 rounded-full text-[10px]" id="badgeSafe">ปลอดภัย</span>
+                </div>
+                <div class="mt-4 flex items-baseline space-x-2">
+                    <span class="text-3xl font-extrabold text-teal-400 tracking-tight" id="lblSafeCount">0</span>
+                    <span class="text-slate-400 text-sm">จุดตรวจ</span>
+                </div>
+                <div class="mt-2 text-xs text-slate-500">
+                    <span id="lblRemainingSafe">รอการตรวจอีก 63 จุด</span>
+                </div>
+            </div>
+
+            <!-- Card 4: Hardware Maintenance Needed (Bait missing / Damaged) -->
+            <div class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/40 shadow-xl flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">พบปัญหา / ชำรุด</span>
+                    <span class="text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold" id="badgeDamaged">ไม่มี</span>
+                </div>
+                <div class="mt-4 flex items-baseline space-x-2">
+                    <span class="text-3xl font-extrabold text-amber-500 tracking-tight" id="lblIssuesCount">0</span>
+                    <span class="text-slate-400 text-sm">จุด</span>
+                </div>
+                <div class="mt-2 text-xs text-slate-400 flex items-center space-x-1">
+                    <i class="fa-solid fa-wrench text-amber-500"></i>
+                    <span>เหยื่อหมด หรือ กรงชำรุด</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tabbed Navigation / Filter Control -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-800/40 p-4 rounded-2xl border border-slate-700/30">
+            <!-- Filter categories -->
+            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                <button onclick="filterTraps('ALL')" id="btnFilter-ALL" class="px-4 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white transition-all shadow-md shadow-indigo-600/10">
+                    ทั้งหมด (63)
+                </button>
+                <button onclick="filterTraps('UNCHECKED')" id="btnFilter-UNCHECKED" class="px-3 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all border border-slate-700/50">
+                    ยังไม่ได้ตรวจ
+                </button>
+                <button onclick="filterTraps('SAFE')" id="btnFilter-SAFE" class="px-3 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all border border-slate-700/50">
+                    ปกติ / ไม่พบหนู
+                </button>
+                <button onclick="filterTraps('CAUGHT')" id="btnFilter-CAUGHT" class="px-3 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all border border-slate-700/50">
+                    พบหนู !
+                </button>
+                <button onclick="filterTraps('ISSUE')" id="btnFilter-ISSUE" class="px-3 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all border border-slate-700/50">
+                    มีปัญหา / เหยื่อหมด
+                </button>
+            </div>
+
+            <!-- Quick Action: Bulk Save Clear & CSV Export -->
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button onclick="openBulkUpdateModal()" class="flex-1 sm:flex-none px-3.5 py-2 bg-emerald-600/80 hover:bg-emerald-600 text-emerald-50 text-xs font-semibold rounded-xl transition duration-200 flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-700/10">
+                    <i class="fa-solid fa-check-double"></i>
+                    <span>ตรวจด่วนทั้งหมดปกติ</span>
+                </button>
+                <button onclick="exportToCSV()" class="flex-1 sm:flex-none px-3.5 py-2 bg-slate-700 hover:bg-slate-600 text-slate-100 text-xs font-semibold rounded-xl transition duration-200 flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-file-export"></i>
+                    <span>ออกรายงาน CSV</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Layout Split -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- Interactive Visual Grid Map of 63 Traps (Left Area) -->
+            <section class="lg:col-span-7 bg-slate-800/30 rounded-3xl p-5 border border-slate-800 flex flex-col justify-between space-y-6 shadow-2xl relative min-h-[600px]">
+                
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-base font-bold text-slate-200 flex items-center space-x-2">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></span>
+                            <span>ผังแผนที่จุดตรวจกรงดักหนู (63 Stations Map)</span>
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">คลิกที่ช่องกล่องจุดตรวจเพื่อลงบันทึกผลการตรวจสอบของแต่ละวัน</p>
+                    </div>
+                    <!-- Zone Legend indicators -->
+                    <div class="hidden sm:flex items-center space-x-3 text-[11px] text-slate-400 bg-slate-800/80 p-2 rounded-xl border border-slate-700/40">
+                        <span class="flex items-center space-x-1">
+                            <span class="w-2.5 h-2.5 rounded bg-slate-700 inline-block"></span>
+                            <span>รอตรวจ</span>
+                        </span>
+                        <span class="flex items-center space-x-1">
+                            <span class="w-2.5 h-2.5 rounded bg-emerald-500 inline-block"></span>
+                            <span>ปกติ</span>
+                        </span>
+                        <span class="flex items-center space-x-1">
+                            <span class="w-2.5 h-2.5 rounded bg-rose-500 inline-block"></span>
+                            <span>พบหนู</span>
+                        </span>
+                        <span class="flex items-center space-x-1">
+                            <span class="w-2.5 h-2.5 rounded bg-amber-500 inline-block"></span>
+                            <span>เหยื่อหมด/ชำรุด</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Scrollable Zone layout -->
+                <div class="space-y-6">
+                    
+                    <!-- Zone 1: คลังสินค้าอุตสาหกรรม (Warehouse A & B) -->
+                    <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center space-x-2 text-indigo-400">
+                                <i class="fa-solid fa-warehouse text-sm"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Zone A: คลังสินค้า & จัดเก็บ (Warehouse A & B)</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-semibold bg-slate-800 px-2.5 py-0.5 rounded-full">กรง 01 - 20</span>
+                        </div>
+                        <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneA">
+                            <!-- JS Dynamically populates Traps 1 to 20 -->
+                        </div>
+                    </div>
+
+                    <!-- Zone 2: ฝ่ายผลิตและไลน์ประกอบ (Production & Assembly) -->
+                    <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center space-x-2 text-pink-400">
+                                <i class="fa-solid fa-industry text-sm"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Zone B: ฝ่ายผลิต & ไลน์ประกอบ (Production Area)</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-semibold bg-slate-800 px-2.5 py-0.5 rounded-full">กรง 21 - 40</span>
+                        </div>
+                        <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneB">
+                            <!-- JS Dynamically populates Traps 21 to 40 -->
+                        </div>
+                    </div>
+
+                    <!-- Zone 3: สำนักงาน และ โรงอาหาร (Office & Canteen) -->
+                    <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center space-x-2 text-cyan-400">
+                                <i class="fa-solid fa-building text-sm"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Zone C: อาคารสำนักงาน & โรงอาหาร (Office & Canteen)</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-semibold bg-slate-800 px-2.5 py-0.5 rounded-full">กรง 41 - 50</span>
+                        </div>
+                        <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneC">
+                            <!-- JS Dynamically populates Traps 41 to 50 -->
+                        </div>
+                    </div>
+
+                    <!-- Zone 4: พื้นที่รอบนอก & สวน (Outdoor & Perimeter) -->
+                    <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center space-x-2 text-amber-400">
+                                <i class="fa-solid fa-tree text-sm"></i>
+                                <span class="text-xs font-bold uppercase tracking-wider">Zone D: แนวรั้วภายนอกอาคาร (Outdoor & Perimeter)</span>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-semibold bg-slate-800 px-2.5 py-0.5 rounded-full">กรง 51 - 63</span>
+                        </div>
+                        <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneD">
+                            <!-- JS Dynamically populates Traps 51 to 63 -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer Status indicators for mobile -->
+                <div class="flex sm:hidden items-center justify-around text-[10px] text-slate-400 pt-2 border-t border-slate-800">
+                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded bg-slate-700"></span> <span>รอตรวจ</span></span>
+                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded bg-emerald-500"></span> <span>ปกติ</span></span>
+                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded bg-rose-500"></span> <span>พบหนู</span></span>
+                    <span class="flex items-center space-x-1"><span class="w-2 h-2 rounded bg-amber-500"></span> <span>ชำรุด</span></span>
+                </div>
+            </section>
+
+            <!-- Dashboard Widgets, Analytics Chart, and Log Area (Right Area) -->
+            <section class="lg:col-span-5 flex flex-col gap-6">
+
+                <!-- Real-time Chart Widget -->
+                <div class="bg-slate-800/30 rounded-3xl p-5 border border-slate-800 shadow-xl">
+                    <h3 class="text-sm font-bold text-slate-200 flex items-center justify-between mb-4">
+                        <span><i class="fa-solid fa-chart-pie text-indigo-400 mr-2"></i>วิเคราะห์สัดส่วนตรวจวันนี้</span>
+                        <span class="text-xs text-slate-400">อัปเดตแบบ Live</span>
+                    </h3>
+                    <div class="relative w-full h-52 flex items-center justify-center">
+                        <canvas id="chartStatusBreakdown" class="max-w-full h-full"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Inspections Timeline Feed / Live Logs -->
+                <div class="bg-slate-800/30 rounded-3xl p-5 border border-slate-800 shadow-xl flex-1 flex flex-col justify-between min-h-[350px]">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-bold text-slate-200">
+                                <i class="fa-solid fa-list-check text-rose-400 mr-2"></i>ประวัติการตรวจบันทึกวันนี้
+                            </h3>
+                            <button onclick="clearAllToday()" class="text-[11px] text-rose-400 hover:text-rose-300 font-semibold hover:underline">
+                                <i class="fa-solid fa-trash-can mr-1"></i>ล้างทั้งหมด
+                            </button>
+                        </div>
+                        
+                        <!-- Search Inspections bar -->
+                        <div class="relative mb-3">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500 text-xs">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="text" id="logSearch" onkeyup="searchInspectionLogs()" placeholder="ค้นหาตามชื่อผู้ตรวจ หรือหมายเลข..." 
+                                   class="bg-slate-900/60 border border-slate-800/80 text-xs rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-9 pr-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none transition-all">
+                        </div>
+
+                        <!-- Active Log Container -->
+                        <div class="overflow-y-auto max-h-72 space-y-2.5 pr-1" id="timelineLogsContainer">
+                            <!-- Dynamically loaded with reports -->
+                            <div class="text-center py-8 text-slate-500 text-xs">
+                                <i class="fa-solid fa-clipboard text-slate-700 text-2xl mb-2 block"></i>
+                                ไม่มีบันทึกสำหรับวันนี้ เริ่มตรวจเช็คกรงดักหนูได้เลย!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Indicator of User's System Node ID -->
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-[11px] text-slate-500">
+                        <span>Inspector Mode: Live Peer Active</span>
+                        <span class="font-mono bg-slate-900 px-2 py-0.5 rounded text-indigo-400" id="lblUserNode">User_Node</span>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Modal: Individual Inspection Report Form -->
+    <div id="modalInspection" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeInspectionModal()"></div>
+
+            <!-- This element is to trick the browser into centering the modal contents. -->
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <!-- Modal Content Body -->
+            <div class="inline-block align-bottom bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-700/60">
+                
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-slate-900 to-slate-850 px-6 py-4 flex justify-between items-center border-b border-slate-700/40">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400" id="modalTrapBadge">
+                            <i class="fa-solid fa-box"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-100" id="modalTitle">
+                                จุดบันทึกตรวจเช็คกรงดักหนู
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5" id="modalSubtitle">
+                                หมายเลขกรง: #01 | โซน A คลังสินค้า
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="closeInspectionModal()" class="text-slate-400 hover:text-slate-200 transition">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Form -->
+                <form id="inspectionForm" onsubmit="submitInspection(event)" class="px-6 py-4 space-y-4">
+                    <input type="hidden" id="formTrapId">
+                    <input type="hidden" id="formZone">
+
+                    <!-- Inspector Name Selector -->
+                    <div>
+                        <label for="formInspector" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ชื่อพนักงานผู้ตรวจเช็ค <span class="text-rose-400">*</span></label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+                                <i class="fa-regular fa-user"></i>
+                            </span>
+                            <input type="text" id="formInspector" required list="staffList" placeholder="พิมพ์ชื่อผู้ตรวจสอบ หรือเลือกจากรายการ..."
+                                   class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 placeholder-slate-500 text-sm focus:outline-none transition-all">
+                            <datalist id="staffList">
+                                <option value="สมชาย เจริญสุข">
+                                <option value="วรรณิภา มั่นคง">
+                                <option value="อนันต์ ยอดรักษ์">
+                                <option value="ปิยะพงษ์ เลิศวิไล">
+                                <option value="กิตติศักดิ์ ศรีสุข">
+                            </datalist>
+                        </div>
+                    </div>
+
+                    <!-- Trap Status selection radio grids -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ผลการตรวจสอบ <span class="text-rose-400">*</span></label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <!-- Option 1: Safe -->
+                            <label class="relative flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900/40 cursor-pointer select-none hover:border-emerald-500/50 hover:bg-emerald-500/5 transition duration-200 focus-within:ring-2 focus-within:ring-emerald-500">
+                                <input type="radio" name="formStatus" value="SAFE" checked onchange="toggleRatsInput(false)" class="sr-only">
+                                <div class="text-center space-y-1">
+                                    <i class="fa-solid fa-shield-halved text-emerald-500 text-lg mb-1 block"></i>
+                                    <span class="block text-xs font-bold text-slate-200">ปกติ</span>
+                                    <span class="block text-[10px] text-slate-400">ไม่พบหนู</span>
+                                </div>
+                            </label>
+
+                            <!-- Option 2: Caught -->
+                            <label class="relative flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900/40 cursor-pointer select-none hover:border-rose-500/50 hover:bg-rose-500/5 transition duration-200 focus-within:ring-2 focus-within:ring-rose-500">
+                                <input type="radio" name="formStatus" value="CAUGHT" onchange="toggleRatsInput(true)" class="sr-only">
+                                <div class="text-center space-y-1">
+                                    <i class="fa-solid fa-skull-crossbones text-rose-500 text-lg mb-1 block"></i>
+                                    <span class="block text-xs font-bold text-slate-200">พบหนู !</span>
+                                    <span class="block text-[10px] text-slate-400">ติดกับดัก</span>
+                                </div>
+                            </label>
+
+                            <!-- Option 3: Issues / Bait Missing -->
+                            <label class="relative flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900/40 cursor-pointer select-none hover:border-amber-500/50 hover:bg-amber-500/5 transition duration-200 focus-within:ring-2 focus-within:ring-amber-500">
+                                <input type="radio" name="formStatus" value="ISSUE" onchange="toggleRatsInput(false)" class="sr-only">
+                                <div class="text-center space-y-1">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-lg mb-1 block"></i>
+                                    <span class="block text-xs font-bold text-slate-200">ชำรุด/เหยื่อหมด</span>
+                                    <span class="block text-[10px] text-slate-400">ต้องบำรุงรักษา</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Input: Number of Rats (Shows only if CAUGHT is selected) -->
+                    <div id="divRatsCount" class="hidden animate-fadeIn">
+                        <label for="formRatsCount" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">จำนวนหนูที่พบ (ตัว) <span class="text-rose-400">*</span></label>
+                        <div class="relative w-32">
+                            <input type="number" id="formRatsCount" value="1" min="1" max="10"
+                                   class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full px-3 py-2 text-slate-100 text-center text-sm font-bold focus:outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Maintenance Note Textbox -->
+                    <div>
+                        <label for="formNotes" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">รายละเอียดข้อเสนอแนะเพิ่มเติม</label>
+                        <textarea id="formNotes" rows="2" placeholder="เช่น กรงปิดไม่สนิท, เหยื่อขาดแคลน, พบรอยแทะใหม่..."
+                                  class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full p-3 text-slate-100 placeholder-slate-500 text-sm focus:outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                    <!-- Actions Buttons -->
+                    <div class="pt-2 flex justify-end space-x-3">
+                        <button type="button" onclick="closeInspectionModal()" 
+                                class="px-4 py-2.5 bg-slate-900/80 border border-slate-700 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition duration-200">
+                            ยกเลิก
+                        </button>
+                        <button type="submit" 
+                                class="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-rose-600/10">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>บันทึกผลตรวจเช็ค
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Bulk Complete Validation -->
+    <div id="modalBulk" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeBulkModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-700/60 p-6 space-y-4">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mb-3">
+                        <i class="fa-solid fa-circle-check text-xl"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-100">ยืนยันลงตรวจปกติทุกกรง?</h3>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        ระบบจะทำการบันทึกจุดที่ <strong class="text-slate-300">"ยังไม่ได้ตรวจ"</strong> ทั้งหมดในวันนี้ ให้กลายเป็นสถานะ <strong class="text-emerald-400">ปกติ / ปลอดภัย</strong> อัตโนมัติในครั้งเดียว
+                    </p>
+                </div>
+
+                <div class="space-y-3">
+                    <label for="bulkInspector" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ระบุชื่อพนักงานผู้ตรวจเช็ค <span class="text-rose-400">*</span></label>
+                    <input type="text" id="bulkInspector" placeholder="ป้อนชื่อผู้ดูแล..." required
+                           class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full px-3 py-2.5 text-slate-100 text-sm focus:outline-none">
+                </div>
+
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeBulkModal()" 
+                            class="flex-1 px-4 py-2 bg-slate-900 border border-slate-700 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition duration-200">
+                        ยกเลิก
+                    </button>
+                    <button type="button" onclick="submitBulkSafe()" 
+                            class="flex-1 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-emerald-600/10">
+                        <i class="fa-solid fa-check-double mr-1"></i>บันทึกปกติทันที
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert / Custom Message Pop-up Toast -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-4 flex items-center space-x-3 max-w-sm">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-emerald-400 bg-emerald-500/10" id="toastIconContainer">
+                <i class="fa-solid fa-circle-check" id="toastIcon"></i>
+            </div>
+            <div>
+                <p class="text-xs font-semibold text-slate-200" id="toastTitle">สำเร็จ</p>
+                <p class="text-[10px] text-slate-400 mt-0.5" id="toastMessage">อัปเดตข้อมูลสำเร็จ</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom CSS Animation support for dynamic UI updates -->
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+        .trap-btn-active:active {
+            transform: scale(0.92);
+        }
+    </style>
+
+    <!-- Firebase Connection script with fallback strategy -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, getDocs, updateDoc, writeBatch, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global state and constants definitions
+        const TOTAL_STATIONS = 63;
+        let firebaseApp, db, auth;
+        let activeUser = null;
+        let activeRecords = {}; // Daily log records mapped by trap number: { "1": { status: 'SAFE', ... }, "2": { ... } }
+        let currentMonthInspectionRecords = []; // Store inspection logs
+        let currentFilter = 'ALL'; // ALL, UNCHECKED, SAFE, CAUGHT, ISSUE
+        let chartInstance = null; // ChartJS control
+        
+        // Setup initial selected date value
+        const dateInput = document.getElementById('inspectionDate');
+        const todayStr = new Date().toISOString().split('T')[0];
+        dateInput.value = todayStr;
+        dateInput.max = todayStr; // Block future dates
+
+        // Establish User Unique Local Node ID for identification
+        const generateNodeId = () => {
+            let nid = localStorage.getItem('inspection_node_id');
+            if(!nid) {
+                nid = 'NODE_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                localStorage.setItem('inspection_node_id', nid);
+            }
+            return nid;
+        };
+        const activeNodeId = generateNodeId();
+        document.getElementById('lblUserNode').innerText = activeNodeId;
+
+        // Firebase configurations & authentication handling (Rule 1, Rule 3 compliant)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'smart-rat-trap-monitor';
+        let isFirebaseConnected = false;
+
+        const initializeRealtimeDatabase = async () => {
+            try {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    firebaseApp = initializeApp(firebaseConfig);
+                    auth = getAuth(firebaseApp);
+                    db = getFirestore(firebaseApp);
+
+                    // Authentic priority (Rule 3)
+                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+
+                    onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            activeUser = user;
+                            isFirebaseConnected = true;
+                            showToast("เชื่อมต่อคลาวด์แล้ว", "ข้อมูลทำการซิงค์แบบสดเรียลไทม์", "emerald");
+                            // Load data from Firebase
+                            listenToInspectionUpdates();
+                        }
+                    });
+                } else {
+                    useMockLocalDatabase();
+                }
+            } catch (err) {
+                console.warn("Firebase config not ready. Initializing offline standalone mode:", err);
+                useMockLocalDatabase();
+            }
+        };
+
+        // Standalone Local Storage implementation (Rule 1 Compliant path structure fallback)
+        const useMockLocalDatabase = () => {
+            isFirebaseConnected = false;
+            showToast("โหมดใช้งานออฟไลน์", "ข้อมูลถูกจัดเก็บไว้บนบราวเซอร์จำลอง", "amber");
+            loadLocalInspections();
+        };
+
+        // Standardized paths according to mandatory Rule 1
+        // Public Path: /artifacts/{appId}/public/data/inspections
+        const getFirebaseCollectionRef = () => {
+            return collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
+        };
+
+        const getFirebaseDocRef = (docId) => {
+            return doc(db, 'artifacts', appId, 'public', 'data', 'inspections', docId);
+        };
+
+        // Real-time listener for Firestore updates (Rule 2 simple query, filter/sort in JS)
+        let firebaseUnsubscriber = null;
+        const listenToInspectionUpdates = () => {
+            if (!isFirebaseConnected || !db) return;
+            
+            if (firebaseUnsubscriber) {
+                firebaseUnsubscriber();
+            }
+
+            const targetDate = dateInput.value;
+            const queryRef = getFirebaseCollectionRef();
+
+            document.getElementById('syncIcon').classList.add('fa-spin');
+
+            // Listening via standard Snapshot listener (Rule 2 Simple non-compound query)
+            firebaseUnsubscriber = onSnapshot(queryRef, (snapshot) => {
+                activeRecords = {};
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Perform date filtering entirely in JavaScript memory (Avoid Complex Queries Rule 2)
+                    if (data.date === targetDate) {
+                        activeRecords[data.trapId] = data;
+                    }
+                });
+                
+                renderInteractiveMap();
+                updateDashboardKPIs();
+                updateLogTimeline();
+                updateAnalyticsChart();
+                
+                document.getElementById('syncIcon').classList.remove('fa-spin');
+            }, (error) => {
+                console.error("Firestore listening failed: ", error);
+                document.getElementById('syncIcon').classList.remove('fa-spin');
+                showToast("ข้อมูลขัดข้อง", "ไม่สามารถเชื่อมโยงเซิร์ฟเวอร์ย่อยได้", "rose");
+            });
+        };
+
+        // Standalone local offline data management
+        const loadLocalInspections = () => {
+            const stored = localStorage.getItem(`rat_inspections_${appId}`);
+            const allRecords = stored ? JSON.parse(stored) : getSampleInitialRecords();
+            
+            const targetDate = dateInput.value;
+            activeRecords = {};
+            
+            // Extract today's date entries
+            Object.values(allRecords).forEach(rec => {
+                if(rec.date === targetDate) {
+                    activeRecords[rec.trapId] = rec;
+                }
+            });
+
+            renderInteractiveMap();
+            updateDashboardKPIs();
+            updateLogTimeline();
+            updateAnalyticsChart();
+        };
+
+        // Generate beautiful mockup demonstration data for standalone user run
+        const getSampleInitialRecords = () => {
+            const initial = {};
+            const sampleInspectors = ["สมชาย เจริญสุข", "วรรณิภา มั่นคง", "อนันต์ ยอดรักษ์"];
+            const selectedDate = dateInput.value;
+            
+            // Seed 12 random inspected traps for initial UI excitement
+            const sampleActiveTraps = [3, 7, 12, 18, 22, 28, 33, 44, 45, 52, 58, 61];
+            sampleActiveTraps.forEach((trapId) => {
+                let status = "SAFE";
+                let count = 0;
+                let notes = "";
+                
+                if (trapId === 12 || trapId === 33) {
+                    status = "CAUGHT";
+                    count = Math.floor(Math.random() * 2) + 1;
+                    notes = "พบหนูตัวขนาดใหญ่สายพันธุ์ท้องนา";
+                } else if (trapId === 45) {
+                    status = "ISSUE";
+                    notes = "เหยื่อล่อถูกลมพัดกระจาย แนะนำให้เปลี่ยนแบบเม็ดแผ่น";
+                }
+
+                initial[`${selectedDate}_${trapId}`] = {
+                    id: `${selectedDate}_${trapId}`,
+                    trapId: trapId.toString(),
+                    zone: getZoneByTrapId(trapId),
+                    status: status,
+                    ratsCount: count,
+                    inspector: sampleInspectors[Math.floor(Math.random() * sampleInspectors.length)],
+                    timestamp: new Date().toISOString(),
+                    notes: notes,
+                    date: selectedDate,
+                    nodeId: 'DEMO_NODE'
+                };
+            });
+            
+            return initial;
+        };
+
+        // Helper: Find appropriate warehouse/office/perimeter zones
+        const getZoneByTrapId = (id) => {
+            const trap = parseInt(id);
+            if (trap >= 1 && trap <= 20) return 'A';
+            if (trap >= 21 && trap <= 40) return 'B';
+            if (trap >= 41 && trap <= 50) return 'C';
+            if (trap >= 51 && trap <= 63) return 'D';
+            return 'A';
+        };
+
+        const getZoneLabel = (zoneCode) => {
+            switch(zoneCode) {
+                case 'A': return 'คลังสินค้า (Zone A)';
+                case 'B': return 'ฝ่ายผลิต (Zone B)';
+                case 'C': return 'สำนักงาน/โรงอาหาร (Zone C)';
+                case 'D': return 'ภายนอกอาคาร (Zone D)';
+                default: return 'พื้นที่ทั่วไป';
+            }
+        };
+
+        // Render 63 Interactive Button nodes divided smoothly by zones
+        const renderInteractiveMap = () => {
+            const gridContainers = {
+                'A': document.getElementById('gridZoneA'),
+                'B': document.getElementById('gridZoneB'),
+                'C': document.getElementById('gridZoneC'),
+                'D': document.getElementById('gridZoneD')
+            };
+
+            // Clear old HTML
+            Object.values(gridContainers).forEach(container => {
+                if(container) container.innerHTML = '';
+            });
+
+            // Loop 63 stations
+            for (let i = 1; i <= TOTAL_STATIONS; i++) {
+                const trapIdStr = i.toString();
+                const zone = getZoneByTrapId(i);
+                const record = activeRecords[trapIdStr];
+                
+                const container = gridContainers[zone];
+                if (!container) continue;
+
+                // Determine styling based on inspection values
+                let btnClasses = "h-12 w-full rounded-xl flex flex-col items-center justify-center font-bold text-xs shadow-md transition-all duration-150 transform hover:scale-105 active:scale-95 cursor-pointer relative trap-btn-active ";
+                let labelColor = "text-slate-100";
+                let statusDot = "";
+                let indicatorSubText = "";
+
+                if (!record) {
+                    // Unchecked state (Grey Slate)
+                    btnClasses += "bg-slate-800 hover:bg-slate-750 border border-slate-700/50 hover:border-slate-600/80";
+                    indicatorSubText = "รอตรวจ";
+                } else if (record.status === 'SAFE') {
+                    // Safe inspected (Bright Emerald)
+                    btnClasses += "bg-emerald-600/20 hover:bg-emerald-600/30 border-2 border-emerald-500 text-emerald-400";
+                    labelColor = "text-emerald-300";
+                    indicatorSubText = "ปกติ";
+                } else if (record.status === 'CAUGHT') {
+                    // Rat Caught (Vibrant Danger Rose)
+                    btnClasses += "bg-rose-600/20 hover:bg-rose-600/30 border-2 border-rose-500 text-rose-400 animate-pulse";
+                    labelColor = "text-rose-300";
+                    indicatorSubText = `พบ ${record.ratsCount} ตัว`;
+                    statusDot = `<span class="absolute top-1 right-1 flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span></span>`;
+                } else if (record.status === 'ISSUE') {
+                    // Bait / Damage alert (Bright warning amber)
+                    btnClasses += "bg-amber-600/20 hover:bg-amber-600/30 border-2 border-amber-500 text-amber-400";
+                    labelColor = "text-amber-300";
+                    indicatorSubText = "ชำรุด";
+                }
+
+                // Filter logic visualization control
+                const matchesFilter = 
+                    currentFilter === 'ALL' ||
+                    (currentFilter === 'UNCHECKED' && !record) ||
+                    (currentFilter === 'SAFE' && record && record.status === 'SAFE') ||
+                    (currentFilter === 'CAUGHT' && record && record.status === 'CAUGHT') ||
+                    (currentFilter === 'ISSUE' && record && record.status === 'ISSUE');
+
+                const opacityClass = matchesFilter ? "opacity-100 scale-100" : "opacity-25 scale-95 pointer-events-none";
+
+                const elementHTML = `
+                    <button type="button" 
+                            onclick="openInspectionModal(${i})" 
+                            class="${btnClasses} ${opacityClass}">
+                        ${statusDot}
+                        <span class="text-[10px] text-slate-400 font-normal">#${trapIdStr.padStart(2, '0')}</span>
+                        <span class="${labelColor} font-bold leading-none text-xs mt-0.5">${indicatorSubText}</span>
+                    </button>
+                `;
+                container.insertAdjacentHTML('beforeend', elementHTML);
+            }
+        };
+
+        // Filter Traps Grid Map based on status buttons
+        window.filterTraps = (filterType) => {
+            currentFilter = filterType;
+            
+            // Remove active stylings on buttons
+            const filterButtons = ['ALL', 'UNCHECKED', 'SAFE', 'CAUGHT', 'ISSUE'];
+            filterButtons.forEach((type) => {
+                const btn = document.getElementById(`btnFilter-${type}`);
+                if (!btn) return;
+                
+                if (type === filterType) {
+                    btn.className = "px-4 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white transition-all shadow-md shadow-indigo-600/10";
+                } else {
+                    btn.className = "px-3 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all border border-slate-700/50";
+                }
+            });
+
+            renderInteractiveMap();
+        };
+
+        // Localized search within the daily inspected history list
+        window.searchInspectionLogs = () => {
+            const input = document.getElementById('logSearch').value.toLowerCase();
+            const logItems = document.querySelectorAll('.log-item');
+            
+            logItems.forEach((item) => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(input)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        };
+
+        // Compute and display metrics & statistics
+        const updateDashboardKPIs = () => {
+            const inspectedList = Object.values(activeRecords);
+            const inspectedCount = inspectedList.length;
+            const completionPercent = Math.round((inspectedCount / TOTAL_STATIONS) * 100) || 0;
+
+            // Inspected Progress
+            document.getElementById('lblInspectedCount').innerText = inspectedCount;
+            document.getElementById('badgeCompletionPercent').innerText = `${completionPercent}%`;
+            document.getElementById('progressCompletion').style.width = `${completionPercent}%`;
+
+            // Rats Count caught
+            const totalRats = inspectedList.reduce((acc, curr) => acc + (parseInt(curr.ratsCount) || 0), 0);
+            const caughtStations = inspectedList.filter(rec => rec.status === 'CAUGHT').length;
+            document.getElementById('lblTotalRats').innerText = totalRats;
+            document.getElementById('lblCaughtStationsCount').innerText = `จากทั้งหมด ${caughtStations} จุดตรวจ`;
+            
+            const badgeCaughtAlert = document.getElementById('badgeCaughtAlert');
+            if (totalRats > 0) {
+                badgeCaughtAlert.innerText = `พบหนูสะสม!`;
+                badgeCaughtAlert.className = "text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold animate-pulse";
+            } else {
+                badgeCaughtAlert.innerText = "ปกติ";
+                badgeCaughtAlert.className = "text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold";
+            }
+
+            // Safe Stations Counter
+            const safeCount = inspectedList.filter(rec => rec.status === 'SAFE').length;
+            document.getElementById('lblSafeCount').innerText = safeCount;
+            const remaining = TOTAL_STATIONS - inspectedCount;
+            document.getElementById('lblRemainingSafe').innerText = remaining > 0 ? `เหลือรอการตรวจสอบอีก ${remaining} จุด` : "ตรวจเช็คเสร็จสิ้นครบ 100% แล้ว";
+
+            // Issues (Maintenance / No bait)
+            const issuesCount = inspectedList.filter(rec => rec.status === 'ISSUE').length;
+            document.getElementById('lblIssuesCount').innerText = issuesCount;
+            const badgeDamaged = document.getElementById('badgeDamaged');
+            if (issuesCount > 0) {
+                badgeDamaged.innerText = `${issuesCount} กรงชำรุด`;
+                badgeDamaged.className = "text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold";
+            } else {
+                badgeDamaged.innerText = "ไม่มี";
+                badgeDamaged.className = "text-slate-400 bg-slate-700/50 px-2 py-0.5 rounded-full text-[10px]";
+            }
+        };
+
+        // Populates the Timeline inspection feed on the right panel
+        const updateLogTimeline = () => {
+            const timelineContainer = document.getElementById('timelineLogsContainer');
+            const logs = Object.values(activeRecords);
+
+            if (logs.length === 0) {
+                timelineContainer.innerHTML = `
+                    <div class="text-center py-12 text-slate-500 text-xs">
+                        <i class="fa-solid fa-clipboard text-slate-700 text-3xl mb-3 block"></i>
+                        ไม่มีบันทึกข้อมูลสำหรับวันที่เลือก <br>เริ่มลงผลตรวจกรงหนูด้านซ้ายได้เลย!
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort logs by newest updated timestamp
+            logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            timelineContainer.innerHTML = '';
+            logs.forEach((log) => {
+                let statusLabel = "";
+                let statusIcon = "";
+                let cardBorder = "border-slate-800 bg-slate-900/40";
+
+                if (log.status === 'SAFE') {
+                    statusIcon = `<div class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400"><i class="fa-solid fa-check text-xs"></i></div>`;
+                    statusLabel = `<span class="text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.5 rounded text-[10px]">ปกติ</span>`;
+                } else if (log.status === 'CAUGHT') {
+                    statusIcon = `<div class="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400 animate-pulse"><i class="fa-solid fa-skull-crossbones text-xs"></i></div>`;
+                    statusLabel = `<span class="text-rose-400 font-bold bg-rose-500/10 px-1.5 py-0.5 rounded text-[10px]">พบหนู ${log.ratsCount} ตัว!</span>`;
+                    cardBorder = "border-rose-500/30 bg-rose-950/10";
+                } else if (log.status === 'ISSUE') {
+                    statusIcon = `<div class="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400"><i class="fa-solid fa-wrench text-xs"></i></div>`;
+                    statusLabel = `<span class="text-amber-400 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded text-[10px]">บำรุงรักษา</span>`;
+                    cardBorder = "border-amber-500/30 bg-amber-950/10";
+                }
+
+                const displayTime = log.timestamp ? new Date(log.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '-';
+
+                const logItemHTML = `
+                    <div class="log-item p-3 rounded-2xl border ${cardBorder} flex items-start justify-between space-x-3 hover:bg-slate-850/50 transition duration-150">
+                        <div class="flex items-start space-x-2.5">
+                            ${statusIcon}
+                            <div>
+                                <div class="flex items-center space-x-1.5">
+                                    <span class="text-xs font-bold text-slate-100">กรง #${log.trapId.padStart(2, '0')}</span>
+                                    <span class="text-[10px] text-slate-500">${getZoneLabel(log.zone)}</span>
+                                </div>
+                                <p class="text-[11px] text-slate-300 mt-0.5">ผู้ตรวจ: ${log.inspector}</p>
+                                ${log.notes ? `<p class="text-[10px] text-slate-400 bg-slate-900/60 p-1.5 rounded-lg border border-slate-800 mt-1.5 max-w-xs italic">"${log.notes}"</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="text-right flex flex-col items-end justify-between h-full space-y-2">
+                            <span class="text-[10px] text-slate-500 font-medium">${displayTime} น.</span>
+                            <div class="flex items-center space-x-1.5">
+                                ${statusLabel}
+                                <button onclick="deleteInspectionReport('${log.trapId}')" class="text-slate-500 hover:text-rose-400 transition" title="ลบข้อมูล">
+                                    <i class="fa-regular fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                timelineContainer.insertAdjacentHTML('beforeend', logItemHTML);
+            });
+        };
+
+        // Load analytical doughnut chart distribution
+        const updateAnalyticsChart = () => {
+            const ctx = document.getElementById('chartStatusBreakdown').getContext('2d');
+            
+            const logs = Object.values(activeRecords);
+            const totalSafe = logs.filter(r => r.status === 'SAFE').length;
+            const totalCaught = logs.filter(r => r.status === 'CAUGHT').length;
+            const totalIssues = logs.filter(r => r.status === 'ISSUE').length;
+            const totalUnchecked = TOTAL_STATIONS - logs.length;
+
+            const chartData = {
+                labels: ['ยังไม่ได้ตรวจ', 'ปกติ/ปลอดภัย', 'ตรวจพบหนู', 'พบปัญหา/ชำรุด'],
+                datasets: [{
+                    data: [totalUnchecked, totalSafe, totalCaught, totalIssues],
+                    backgroundColor: [
+                        '#475569', // Gray Slate (Unchecked)
+                        '#10b981', // Emerald (Safe)
+                        '#f43f5e', // Rose (Caught)
+                        '#f59e0b'  // Amber (Issues)
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#1e293b',
+                    hoverOffset: 4
+                }]
+            };
+
+            if (chartInstance) {
+                // Keep chart updated smoothly without flickering
+                chartInstance.data = chartData;
+                chartInstance.update();
+            } else {
+                chartInstance = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#94a3b8',
+                                    font: {
+                                        size: 11,
+                                        family: 'Sarabun'
+                                    },
+                                    padding: 10
+                                }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            }
+        };
+
+        // Triggered upon clicking a single grid trap
+        window.openInspectionModal = (trapId) => {
+            const trapIdStr = trapId.toString();
+            const zone = getZoneByTrapId(trapId);
+            
+            document.getElementById('formTrapId').value = trapIdStr;
+            document.getElementById('formZone').value = zone;
+            
+            // Format labels inside the inspection dialog box
+            document.getElementById('modalTrapBadge').innerHTML = `<span class="text-sm font-extrabold">#${trapIdStr.padStart(2, '0')}</span>`;
+            document.getElementById('modalTitle').innerText = `บันทึกข้อมูลกรงดักหนู #${trapIdStr.padStart(2, '0')}`;
+            document.getElementById('modalSubtitle').innerText = `ตำแหน่งตรวจวัด: ${getZoneLabel(zone)}`;
+
+            // Auto fill previous inspector name from Local Storage to save time!
+            const lastInspector = localStorage.getItem('last_inspector_name');
+            if (lastInspector) {
+                document.getElementById('formInspector').value = lastInspector;
+            }
+
+            // Check if record exists for editing
+            const existing = activeRecords[trapIdStr];
+            if (existing) {
+                // Pre-fill form values
+                document.getElementById('formInspector').value = existing.inspector;
+                document.getElementById('formNotes').value = existing.notes || "";
+                
+                // Select matching status radio button
+                const radios = document.getElementsByName('formStatus');
+                radios.forEach((radio) => {
+                    if (radio.value === existing.status) {
+                        radio.checked = true;
+                        radio.dispatchEvent(new Event('change'));
+                    }
+                });
+
+                if (existing.status === 'CAUGHT') {
+                    document.getElementById('formRatsCount').value = existing.ratsCount;
+                }
+            } else {
+                // Clear fields default to "SAFE"
+                document.getElementById('formNotes').value = "";
+                document.getElementById('formRatsCount').value = 1;
+                const radios = document.getElementsByName('formStatus');
+                radios.forEach((radio) => {
+                    if (radio.value === 'SAFE') {
+                        radio.checked = true;
+                        radio.dispatchEvent(new Event('change'));
+                    }
+                });
+            }
+
+            // Reveal modal
+            document.getElementById('modalInspection').classList.remove('hidden');
+        };
+
+        window.closeInspectionModal = () => {
+            document.getElementById('modalInspection').classList.add('hidden');
+        };
+
+        window.toggleRatsInput = (show) => {
+            const ratsDiv = document.getElementById('divRatsCount');
+            if (show) {
+                ratsDiv.classList.remove('hidden');
+            } else {
+                ratsDiv.classList.add('hidden');
+            }
+        };
+
+        // Individual Submissions
+        window.submitInspection = async (event) => {
+            event.preventDefault();
+            
+            const trapId = document.getElementById('formTrapId').value;
+            const zone = document.getElementById('formZone').value;
+            const inspector = document.getElementById('formInspector').value.trim();
+            const notes = document.getElementById('formNotes').value.trim();
+            
+            // Get checked status
+            let status = 'SAFE';
+            const radios = document.getElementsByName('formStatus');
+            radios.forEach((r) => { if (r.checked) status = r.value; });
+
+            const ratsCount = status === 'CAUGHT' ? parseInt(document.getElementById('formRatsCount').value) || 1 : 0;
+            const targetDate = dateInput.value;
+            const documentId = `${targetDate}_${trapId}`;
+
+            // Save inspector name to speed up next checks
+            localStorage.setItem('last_inspector_name', inspector);
+
+            const reportPayload = {
+                id: documentId,
+                trapId: trapId,
+                zone: zone,
+                status: status,
+                ratsCount: ratsCount,
+                inspector: inspector,
+                notes: notes,
+                date: targetDate,
+                timestamp: new Date().toISOString(),
+                nodeId: activeNodeId
+            };
+
+            if (isFirebaseConnected && db) {
+                try {
+                    // Rule 1: Save using public/private structured path
+                    const docRef = getFirebaseDocRef(documentId);
+                    await setDoc(docRef, reportPayload);
+                    showToast("บันทึกสำเร็จ", `ข้อมูลกรงดักที่ #${trapId.padStart(2, '0')} ถูกอัปโหลดแล้ว`, "emerald");
+                } catch (error) {
+                    console.error("Firestore writing error: ", error);
+                    showToast("เชื่อมต่อขัดข้อง", "บันทึกในอุปกรณ์ทดแทนชั่วคราว", "rose");
+                    fallbackSaveLocal(documentId, reportPayload);
+                }
+            } else {
+                fallbackSaveLocal(documentId, reportPayload);
+            }
+
+            closeInspectionModal();
+        };
+
+        // Offline Fallback Save Local
+        const fallbackSaveLocal = (docId, payload) => {
+            const stored = localStorage.getItem(`rat_inspections_${appId}`);
+            const allRecords = stored ? JSON.parse(stored) : getSampleInitialRecords();
+            
+            allRecords[docId] = payload;
+            localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
+            
+            // Reload local
+            loadLocalInspections();
+            showToast("บันทึกข้อมูลแล้ว", "เก็บข้อมูลไว้บนบราวเซอร์สำเร็จ", "emerald");
+        };
+
+        // Quick Actions: Bulk Inspections (Mark remaining unchecked items as SAFE)
+        window.openBulkUpdateModal = () => {
+            // Preset inspector
+            const lastInspector = localStorage.getItem('last_inspector_name');
+            if (lastInspector) {
+                document.getElementById('bulkInspector').value = lastInspector;
+            }
+            document.getElementById('modalBulk').classList.remove('hidden');
+        };
+
+        window.closeBulkModal = () => {
+            document.getElementById('modalBulk').classList.add('hidden');
+        };
+
+        window.submitBulkSafe = async () => {
+            const inspectorName = document.getElementById('bulkInspector').value.trim();
+            if (!inspectorName) {
+                showToast("กรอกชื่อพนักงาน", "กรุณาระบุชื่อพนักงานผู้รับผิดชอบก่อนยืนยัน", "amber");
+                return;
+            }
+
+            localStorage.setItem('last_inspector_name', inspectorName);
+            const targetDate = dateInput.value;
+            const updatedItems = [];
+
+            // Loop and batch construct values for remaining unchecked traps
+            for (let i = 1; i <= TOTAL_STATIONS; i++) {
+                const trapIdStr = i.toString();
+                // Check if already has a record for today
+                if (!activeRecords[trapIdStr]) {
+                    const documentId = `${targetDate}_${trapIdStr}`;
+                    const payload = {
+                        id: documentId,
+                        trapId: trapIdStr,
+                        zone: getZoneByTrapId(i),
+                        status: 'SAFE',
+                        ratsCount: 0,
+                        inspector: inspectorName,
+                        notes: "ตรวจด่วนอัตโนมัติ",
+                        date: targetDate,
+                        timestamp: new Date().toISOString(),
+                        nodeId: activeNodeId
+                    };
+                    updatedItems.push(payload);
+                }
+            }
+
+            if (updatedItems.length === 0) {
+                showToast("ไม่มีรายการค้างตรวจ", "ทุกจุดตรวจมีผลบันทึกครบถ้วนแล้ววันนี้", "amber");
+                closeBulkModal();
+                return;
+            }
+
+            // Execute Batch save
+            if (isFirebaseConnected && db) {
+                try {
+                    // Perform writing iteratively (avoids complex batches and respects Rule 1)
+                    for (const item of updatedItems) {
+                        const docRef = getFirebaseDocRef(item.id);
+                        await setDoc(docRef, item);
+                    }
+                    showToast("บันทึกด่วนสำเร็จ", `อัปเดตสถานะปกติ ${updatedItems.length} จุดเรียบร้อย`, "emerald");
+                } catch (error) {
+                    console.error("Batch save error: ", error);
+                    fallbackBulkSaveLocal(updatedItems);
+                }
+            } else {
+                fallbackBulkSaveLocal(updatedItems);
+            }
+
+            closeBulkModal();
+        };
+
+        const fallbackBulkSaveLocal = (payloadList) => {
+            const stored = localStorage.getItem(`rat_inspections_${appId}`);
+            const allRecords = stored ? JSON.parse(stored) : getSampleInitialRecords();
+            
+            payloadList.forEach((item) => {
+                allRecords[item.id] = item;
+            });
+
+            localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
+            loadLocalInspections();
+            showToast("บันทึกด่วนสำเร็จ (Local)", `บันทึกค่าสถานะปกติจำนวน ${payloadList.length} จุดตรวจ`, "emerald");
+        };
+
+        // Delete Inspection log
+        window.deleteInspectionReport = async (trapId) => {
+            const targetDate = dateInput.value;
+            const documentId = `${targetDate}_${trapId}`;
+
+            if (isFirebaseConnected && db) {
+                try {
+                    const docRef = getFirebaseDocRef(documentId);
+                    await deleteDoc(docRef);
+                    showToast("ลบรายการแล้ว", `ยกเลิกผลการตรวจจุดดัก #${trapId.padStart(2, '0')}`, "amber");
+                } catch (error) {
+                    console.error("Deletion error: ", error);
+                    fallbackDeleteLocal(documentId);
+                }
+            } else {
+                fallbackDeleteLocal(documentId);
+            }
+        };
+
+        const fallbackDeleteLocal = (docId) => {
+            const stored = localStorage.getItem(`rat_inspections_${appId}`);
+            if (stored) {
+                const allRecords = JSON.parse(stored);
+                if (allRecords[docId]) {
+                    delete allRecords[docId];
+                    localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
+                    loadLocalInspections();
+                    showToast("ลบข้อมูลสำเร็จ", "ลบรายการประวัติประวัติออกจากบราวเซอร์", "amber");
+                }
+            }
+        };
+
+        // Clear All Records for current chosen date
+        window.clearAllToday = async () => {
+            const targetDate = dateInput.value;
+            const trapsToClear = Object.keys(activeRecords);
+
+            if (trapsToClear.length === 0) {
+                showToast("ไม่มีข้อมูล", "วันนี้ยังไม่มีผลตรวจที่ลงทะเบียนไว้", "amber");
+                return;
+            }
+
+            if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลตรวจเช็คทั้งหมด (${trapsToClear.length} จุด) ของวันที่ ${targetDate}?`)) {
+                return;
+            }
+
+            if (isFirebaseConnected && db) {
+                try {
+                    for (const trapId of trapsToClear) {
+                        const docId = `${targetDate}_${trapId}`;
+                        const docRef = getFirebaseDocRef(docId);
+                        await deleteDoc(docRef);
+                    }
+                    showToast("ล้างประวัติวันนี้แล้ว", "ลบประวัติของวันนี้ทั้งหมดบนคลาวด์แล้ว", "amber");
+                } catch (err) {
+                    console.error("Error clearing logs: ", err);
+                    fallbackClearLocal(targetDate, trapsToClear);
+                }
+            } else {
+                fallbackClearLocal(targetDate, trapsToClear);
+            }
+        };
+
+        const fallbackClearLocal = (date, ids) => {
+            const stored = localStorage.getItem(`rat_inspections_${appId}`);
+            if (stored) {
+                const allRecords = JSON.parse(stored);
+                ids.forEach((id) => {
+                    const docId = `${date}_${id}`;
+                    delete allRecords[docId];
+                });
+                localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
+                loadLocalInspections();
+                showToast("ล้างประวัติแล้ว (Local)", "ลบข้อมูลทั้งหมดที่บันทึกของวันนี้", "amber");
+            }
+        };
+
+        // Export current inspected data to CSV
+        window.exportToCSV = () => {
+            const date = dateInput.value;
+            const records = Object.values(activeRecords);
+
+            if (records.length === 0) {
+                showToast("ไม่มีข้อมูลให้ส่งออก", "กรุณาลงผลตรวจอย่างน้อย 1 จุดเพื่อออกรายงาน", "amber");
+                return;
+            }
+
+            // Build CSV content strings
+            let csvContent = "\uFEFF"; // Thai font support in Excel (UTF-8 BOM)
+            csvContent += "หมายเลขกรง,พื้นที่โซน,สถานะตรวจเช็ค,จำนวนหนูที่จับได้ (ตัว),ชื่อพนักงานผู้บันทึก,วันเวลาตรวจสอบ,หมายเหตุคำอธิบาย\n";
+
+            // Add all 63 items regardless of completion (shows blank if unchecked)
+            for (let i = 1; i <= TOTAL_STATIONS; i++) {
+                const record = activeRecords[i.toString()];
+                const zoneLabel = getZoneLabel(getZoneByTrapId(i));
+                
+                if (record) {
+                    let statusTxt = "ปกติ (ปลอดภัย)";
+                    if (record.status === 'CAUGHT') statusTxt = "พบหนู";
+                    if (record.status === 'ISSUE') statusTxt = "ชำรุด/เหยื่อหมด";
+
+                    const safeNotes = record.notes ? record.notes.replace(/,/g, " ") : "";
+                    csvContent += `${i},${zoneLabel},${statusTxt},${record.ratsCount},${record.inspector},${record.timestamp},${safeNotes}\n`;
+                } else {
+                    csvContent += `${i},${zoneLabel},ยังไม่ได้ตรวจเช็ค,0,-,-,-\n`;
+                }
+            }
+
+            // Create invisible temporary download anchor
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Rat_Trap_Report_${date}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("ส่งออกข้อมูลสำเร็จ", `รายงานถูกดาวน์โหลดลงในเครื่องของคุณแล้ว`, "emerald");
+        };
+
+        // Notification systems Toast
+        window.showToast = (title, message, theme = "emerald") => {
+            const toast = document.getElementById('toastNotification');
+            const tTitle = document.getElementById('toastTitle');
+            const tMsg = document.getElementById('toastMessage');
+            const tIcon = document.getElementById('toastIcon');
+            const tIconContainer = document.getElementById('toastIconContainer');
+
+            tTitle.innerText = title;
+            tMsg.innerText = message;
+
+            // Reset icon class
+            tIcon.className = "fa-solid ";
+            if (theme === "emerald") {
+                tIcon.classList.add("fa-circle-check");
+                tIconContainer.className = "w-8 h-8 rounded-full flex items-center justify-center text-emerald-400 bg-emerald-500/10";
+            } else if (theme === "amber") {
+                tIcon.classList.add("fa-triangle-exclamation");
+                tIconContainer.className = "w-8 h-8 rounded-full flex items-center justify-center text-amber-400 bg-amber-500/10";
+            } else if (theme === "rose") {
+                tIcon.classList.add("fa-circle-xmark");
+                tIconContainer.className = "w-8 h-8 rounded-full flex items-center justify-center text-rose-400 bg-rose-500/10";
+            }
+
+            // Animate In
+            toast.classList.remove('translate-y-12', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            // Timeout to dismiss
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-12', 'opacity-0');
+            }, 3500);
+        };
+
+        // Date Change Event Handler
+        dateInput.addEventListener('change', () => {
+            if (isFirebaseConnected) {
+                listenToInspectionUpdates();
+            } else {
+                loadLocalInspections();
+            }
+            showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
+        });
+
+        // Trigger Database Connection upon window load
+        window.onload = () => {
+            initializeRealtimeDatabase();
+            
+            // Manual sync button
+            document.getElementById('btnSync').addEventListener('click', () => {
+                if (isFirebaseConnected) {
+                    listenToInspectionUpdates();
+                    showToast("ซิงค์เรียบร้อย", "อัปเดตข้อมูลจากเซิร์ฟเวอร์หลักล่าสุด", "emerald");
+                } else {
+                    loadLocalInspections();
+                    showToast("อัปเดตแล้ว (Offline)", "ข้อมูลได้รับการเรียกดึงจากแคชเรียบร้อย", "emerald");
+                }
+            });
+        };
+    </script>
+</body>
+</html>
