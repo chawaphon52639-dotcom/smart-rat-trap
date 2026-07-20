@@ -304,7 +304,7 @@
                             <h3 class="text-sm font-bold text-slate-200">
                                 <i class="fa-solid fa-list-check text-rose-400 mr-2"></i>ประวัติการตรวจบันทึกวันนี้
                             </h3>
-                            <button onclick="clearAllToday()" class="text-[11px] text-rose-400 hover:text-rose-300 font-semibold hover:underline">
+                            <button onclick="triggerClearAllToday()" class="text-[11px] text-rose-400 hover:text-rose-300 font-semibold hover:underline">
                                 <i class="fa-solid fa-trash-can mr-1"></i>ล้างทั้งหมด
                             </button>
                         </div>
@@ -498,6 +498,37 @@
         </div>
     </div>
 
+    <!-- Modal: Confirm Delete All (Replaces native confirm() to comply with guidelines) -->
+    <div id="modalConfirmClear" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeConfirmClearModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-700/60 p-6 space-y-4">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 mb-3">
+                        <i class="fa-solid fa-triangle-exclamation text-xl animate-pulse"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-100">ยืนยันการล้างข้อมูลทั้งหมด?</h3>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed" id="confirmClearMessage">
+                        คุณแน่ใจหรือว่าต้องการลบล้างผลตรวจทั้งหมดของวันนี้? การดำเนินการนี้จะไม่สามารถย้อนกลับได้
+                    </p>
+                </div>
+
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeConfirmClearModal()" 
+                            class="flex-1 px-4 py-2 bg-slate-900 border border-slate-700 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition duration-200">
+                        ยกเลิก
+                    </button>
+                    <button type="button" onclick="executeClearAllToday()" 
+                            class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-rose-600/10">
+                        <i class="fa-solid fa-trash-can mr-1"></i>ลบทั้งหมด
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Alert / Custom Message Pop-up Toast -->
     <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-4 flex items-center space-x-3 max-w-sm">
@@ -527,21 +558,21 @@
     <!-- Firebase Connection script with fallback strategy -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // =========================================================================
-        // ⚙️ ส่วนแก้ไขรหัส FIREBASE CONFIG: น้ารามนำชุดข้อมูลจริงมาใส่วางแทนปีกกา { ... } ด้านล่างนี้ได้เลยครับ!
+        // ⚙️ ตัวแปร Firebase Config จริงของน้าราม (ฝังเข้าโค้ดตรงเรียบร้อยแล้วครับ)
         // =========================================================================
-       const firebaseConfig = {
-  apiKey: "AIzaSyBrKnDDKxTAC9LguE1zWlBSTJoQAUXn3yM",
-  authDomain: "my-rat-trap.firebaseapp.com",
-  projectId: "my-rat-trap",
-  storageBucket: "my-rat-trap.firebasestorage.app",
-  messagingSenderId: "847693841799",
-  appId: "1:847693841799:web:6d48473e888eea2b7f7f22",
-  measurementId: "G-2XRQZKTEK0"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyBrKnDDKxTAC9LguE1zWlBSTJoQAUXn3yM",
+            authDomain: "my-rat-trap.firebaseapp.com",
+            projectId: "my-rat-trap",
+            storageBucket: "my-rat-trap.firebasestorage.app",
+            messagingSenderId: "847693841799",
+            appId: "1:847693841799:web:6d48473e888eea2b7f7f22",
+            measurementId: "G-2XRQZKTEK0"
+        };
         // =========================================================================
 
         const TOTAL_STATIONS = 63;
@@ -557,7 +588,7 @@
         dateInput.value = todayStr;
         dateInput.max = todayStr; 
 
-        // Generate Node ID
+        // Generate Node ID for identify inspectors
         const generateNodeId = () => {
             let nid = localStorage.getItem('inspection_node_id');
             if(!nid) {
@@ -574,12 +605,12 @@
         // 🚀 ฟังก์ชันเริ่มเชื่อมระบบฐานข้อมูล
         const initializeRealtimeDatabase = async () => {
             try {
-                // ตรวจสอบว่าน้ารามได้ป้อนค่า config จริงแล้วหรือยัง (ไม่ใช่ค่า apiKey เริ่มต้น "AIzaSy...")
                 if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "AIzaSy...") {
                     firebaseApp = initializeApp(firebaseConfig);
                     auth = getAuth(firebaseApp);
                     db = getFirestore(firebaseApp);
 
+                    // Sign in anonymously for access permission (Rule 3)
                     await signInAnonymously(auth);
 
                     onAuthStateChanged(auth, (user) => {
@@ -605,6 +636,7 @@
             loadLocalInspections();
         };
 
+        // Firestore Paths (CRITICAL - RULE 1 Compliance)
         const getFirebaseCollectionRef = () => {
             return collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
         };
@@ -616,7 +648,7 @@
         // Real-time listener from Firestore
         let firebaseUnsubscriber = null;
         const listenToInspectionUpdates = () => {
-            if (!isFirebaseConnected || !db) return;
+            if (!isFirebaseConnected || !db || !auth.currentUser) return; // Guard logic
             
             if (firebaseUnsubscriber) {
                 firebaseUnsubscriber();
@@ -627,7 +659,7 @@
 
             document.getElementById('syncIcon').classList.add('fa-spin');
 
-            // Listen to data from Firestore (Standard non-compound query to avoid Indexing error)
+            // Listening to complete collection to avoid index generation failures (RULE 2)
             firebaseUnsubscriber = onSnapshot(queryRef, (snapshot) => {
                 activeRecords = {};
                 snapshot.forEach((doc) => {
@@ -644,10 +676,10 @@
                 
                 document.getElementById('syncIcon').classList.remove('fa-spin');
             }, (error) => {
-                console.error("Firestore listening failed, auto-fallback to local storage: ", error);
+                console.error("Firestore listening failed, fallback to local storage: ", error);
                 document.getElementById('syncIcon').classList.remove('fa-spin');
                 showToast("ระบบคลาวด์ขัดข้อง", "เปิดโหมดออฟไลน์สำรองดึงแคชด่วนให้อัตโนมัติ", "rose");
-                useMockLocalDatabase(); // เมื่อเกิดเหตุผิดพลาดให้ดึงออฟไลน์มาทำงานแทนเพื่อไม่ให้หน้าจอว่างเปล่า!
+                useMockLocalDatabase(); 
             });
         };
 
@@ -675,7 +707,7 @@
             const sampleInspectors = ["สมชาย เจริญสุข", "วรรณิภา มั่นคง", "อนันต์ ยอดรักษ์"];
             const selectedDate = dateInput.value;
             
-            // Seed sample data
+            // Seed sample data for preview and offline fallback
             const sampleActiveTraps = [3, 12, 22, 33, 45, 58];
             sampleActiveTraps.forEach((trapId) => {
                 let status = "SAFE";
@@ -1213,18 +1245,26 @@
             }
         };
 
-        window.clearAllToday = async () => {
-            const targetDate = dateInput.value;
+        // Dialog Confirmation Setup instead of window.confirm
+        window.triggerClearAllToday = () => {
             const trapsToClear = Object.keys(activeRecords);
-
             if (trapsToClear.length === 0) {
                 showToast("ไม่มีข้อมูลประวัติ", "วันนี้ยังไม่มีกิจกรรมที่ลงบันทึกรายงาน", "amber");
                 return;
             }
+            const targetDate = dateInput.value;
+            document.getElementById('confirmClearMessage').innerText = `คุณแน่ใจหรือว่าต้องการลบล้างผลตรวจทั้งหมด (${trapsToClear.length} กรง) ของวันที่ ${targetDate}? การลบข้อมูลประวัติจะไม่สามารถกู้คืนกลับมาได้`;
+            document.getElementById('modalConfirmClear').classList.remove('hidden');
+        };
 
-            if (!confirm(`คุณแน่ใจหรือว่าต้องการลบล้างผลตรวจทั้งหมด (${trapsToClear.length} กรง) ของวันที่ ${targetDate}?`)) {
-                return;
-            }
+        window.closeConfirmClearModal = () => {
+            document.getElementById('modalConfirmClear').classList.add('hidden');
+        };
+
+        window.executeClearAllToday = async () => {
+            closeConfirmClearModal();
+            const targetDate = dateInput.value;
+            const trapsToClear = Object.keys(activeRecords);
 
             if (isFirebaseConnected && db) {
                 try {
