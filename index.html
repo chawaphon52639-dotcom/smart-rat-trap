@@ -43,7 +43,6 @@
                 <!-- Brand Logo & Title -->
                 <div class="flex items-center space-x-3">
                     <div class="bg-gradient-to-tr from-amber-500 to-rose-500 p-2.5 rounded-xl shadow-lg shadow-rose-500/10 flex items-center justify-center animate-pulse">
-                        <i class="fa-solid fa-shrimp text-slate-900 text-xl hidden"></i>
                         <svg class="w-6 h-6 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                         </svg>
@@ -127,7 +126,7 @@
                 </div>
             </div>
 
-            <!-- Card 4: Hardware Maintenance Needed (Bait missing / Damaged) -->
+            <!-- Card 4: Hardware Maintenance Needed -->
             <div class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/40 shadow-xl flex flex-col justify-between">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">พบปัญหา / ชำรุด</span>
@@ -217,7 +216,7 @@
                 <!-- Scrollable Zone layout -->
                 <div class="space-y-6">
                     
-                    <!-- Zone 1: คลังสินค้าอุตสาหกรรม (Warehouse A & B) -->
+                    <!-- Zone 1: Warehouse A & B -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-indigo-400">
@@ -231,7 +230,7 @@
                         </div>
                     </div>
 
-                    <!-- Zone 2: ฝ่ายผลิตและไลน์ประกอบ (Production & Assembly) -->
+                    <!-- Zone 2: Production Area -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-pink-400">
@@ -245,7 +244,7 @@
                         </div>
                     </div>
 
-                    <!-- Zone 3: สำนักงาน และ โรงอาหาร (Office & Canteen) -->
+                    <!-- Zone 3: Office & Canteen -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-cyan-400">
@@ -259,7 +258,7 @@
                         </div>
                     </div>
 
-                    <!-- Zone 4: พื้นที่รอบนอก & สวน (Outdoor & Perimeter) -->
+                    <!-- Zone 4: Outdoor & Perimeter -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-amber-400">
@@ -348,7 +347,6 @@
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeInspectionModal()"></div>
 
-            <!-- This element is to trick the browser into centering the modal contents. -->
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
             <!-- Modal Content Body -->
@@ -386,7 +384,7 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
                                 <i class="fa-regular fa-user"></i>
                             </span>
-                            <input type="text" id="formInspector" required list="staffList" placeholder="พิมพ์ชื่อผู้ตรวจสอบ หรือเลือกจากรายการ..."
+                            <input type="text" id="formInspector" required list="staffList" placeholder="พิมพ์ชื่อผู้ตรวจสอบ..."
                                    class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 placeholder-slate-500 text-sm focus:outline-none transition-all">
                             <datalist id="staffList">
                                 <option value="สมชาย เจริญสุข">
@@ -398,11 +396,10 @@
                         </div>
                     </div>
 
-                    <!-- Trap Status selection radio grids -->
+                    <!-- Trap Status selection -->
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ผลการตรวจสอบ <span class="text-rose-400">*</span></label>
                         <div class="grid grid-cols-3 gap-3">
-                            <!-- Option 1: Safe -->
                             <label class="relative flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900/40 cursor-pointer select-none hover:border-emerald-500/50 hover:bg-emerald-500/5 transition duration-200 focus-within:ring-2 focus-within:ring-emerald-500">
                                 <input type="radio" name="formStatus" value="SAFE" checked onchange="toggleRatsInput(false)" class="sr-only">
                                 <div class="text-center space-y-1">
@@ -412,7 +409,6 @@
                                 </div>
                             </label>
 
-                            <!-- Option 2: Caught -->
                             <label class="relative flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900/40 cursor-pointer select-none hover:border-rose-500/50 hover:bg-rose-500/5 transition duration-200 focus-within:ring-2 focus-within:ring-rose-500">
                                 <input type="radio" name="formStatus" value="CAUGHT" onchange="toggleRatsInput(true)" class="sr-only">
                                 <div class="text-center space-y-1">
@@ -422,7 +418,6 @@
                                 </div>
                             </label>
 
-                            <!-- Option 3: Issues / Bait Missing -->
                             <label class="relative flex flex-col p-3 rounded-xl border border-slate-700 bg-slate-900/40 cursor-pointer select-none hover:border-amber-500/50 hover:bg-amber-500/5 transition duration-200 focus-within:ring-2 focus-within:ring-amber-500">
                                 <input type="radio" name="formStatus" value="ISSUE" onchange="toggleRatsInput(false)" class="sr-only">
                                 <div class="text-center space-y-1">
@@ -434,7 +429,7 @@
                         </div>
                     </div>
 
-                    <!-- Dynamic Input: Number of Rats (Shows only if CAUGHT is selected) -->
+                    <!-- Dynamic Input: Number of Rats -->
                     <div id="divRatsCount" class="hidden animate-fadeIn">
                         <label for="formRatsCount" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">จำนวนหนูที่พบ (ตัว) <span class="text-rose-400">*</span></label>
                         <div class="relative w-32">
@@ -446,7 +441,7 @@
                     <!-- Maintenance Note Textbox -->
                     <div>
                         <label for="formNotes" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">รายละเอียดข้อเสนอแนะเพิ่มเติม</label>
-                        <textarea id="formNotes" rows="2" placeholder="เช่น กรงปิดไม่สนิท, เหยื่อขาดแคลน, พบรอยแทะใหม่..."
+                        <textarea id="formNotes" rows="2" placeholder="เช่น กรงปิดไม่สนิท, เปลี่ยนเหยื่อใหม่แล้ว..."
                                   class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full p-3 text-slate-100 placeholder-slate-500 text-sm focus:outline-none transition-all resize-none"></textarea>
                     </div>
 
@@ -516,7 +511,6 @@
         </div>
     </div>
 
-    <!-- Custom CSS Animation support for dynamic UI updates -->
     <style>
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-5px); }
@@ -533,25 +527,36 @@
     <!-- Firebase Connection script with fallback strategy -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, getDocs, updateDoc, writeBatch, deleteDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Global state and constants definitions
+        // =========================================================================
+        // ⚙️ ส่วนแก้ไขรหัส FIREBASE CONFIG: น้ารามนำชุดข้อมูลจริงมาใส่วางแทนปีกกา { ... } ด้านล่างนี้ได้เลยครับ!
+        // =========================================================================
+        const firebaseConfig = {
+            apiKey: "รหัส_apiKey_จริงของน้าราม",
+            authDomain: "รหัส_authDomain_จริงของน้าราม",
+            projectId: "รหัส_projectId_จริงของน้าราม",
+            storageBucket: "รหัส_storageBucket_จริงของน้าราม",
+            messagingSenderId: "รหัส_messagingSenderId_จริงของน้าราม",
+            appId: "รหัส_appId_จริงของน้าราม"
+        };
+        // =========================================================================
+
         const TOTAL_STATIONS = 63;
         let firebaseApp, db, auth;
         let activeUser = null;
-        let activeRecords = {}; // Daily log records mapped by trap number: { "1": { status: 'SAFE', ... }, "2": { ... } }
-        let currentMonthInspectionRecords = []; // Store inspection logs
-        let currentFilter = 'ALL'; // ALL, UNCHECKED, SAFE, CAUGHT, ISSUE
-        let chartInstance = null; // ChartJS control
+        let activeRecords = {}; 
+        let currentFilter = 'ALL'; 
+        let chartInstance = null; 
+        let isFirebaseConnected = false;
         
-        // Setup initial selected date value
         const dateInput = document.getElementById('inspectionDate');
         const todayStr = new Date().toISOString().split('T')[0];
         dateInput.value = todayStr;
-        dateInput.max = todayStr; // Block future dates
+        dateInput.max = todayStr; 
 
-        // Establish User Unique Local Node ID for identification
+        // Generate Node ID
         const generateNodeId = () => {
             let nid = localStorage.getItem('inspection_node_id');
             if(!nid) {
@@ -563,38 +568,24 @@
         const activeNodeId = generateNodeId();
         document.getElementById('lblUserNode').innerText = activeNodeId;
 
-        // Firebase configurations & authentication handling (Rule 1, Rule 3 compliant)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'smart-rat-trap-monitor';
-        let isFirebaseConnected = false;
+        const appId = 'smart-rat-trap-monitor';
 
+        // 🚀 ฟังก์ชันเริ่มเชื่อมระบบฐานข้อมูล
         const initializeRealtimeDatabase = async () => {
             try {
-                const firebaseConfig = {
-                apiKey: "AIzaSyBrKnDDKxTAC9LguE1zWlBSTJoQAUXn3yM",
-                authDomain: "my-rat-trap.firebaseapp.com",
-                projectId: "my-rat-trap",
-                storageBucket: "my-rat-trap.firebasestorage.app",
-                messagingSenderId: "847693841799",
-                 appId: "1:847693841799:web:6d48473e888eea2b7f7f22",
-                 measurementId: "G-2XRQZKTEK0"
-                 };
+                // ตรวจสอบว่าน้ารามได้ป้อนค่า config จริงแล้วหรือยัง (ไม่ใช่ค่า apiKey เริ่มต้น "AIzaSy...")
+                if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "AIzaSy...") {
                     firebaseApp = initializeApp(firebaseConfig);
                     auth = getAuth(firebaseApp);
                     db = getFirestore(firebaseApp);
 
-                    // Authentic priority (Rule 3)
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
+                    await signInAnonymously(auth);
 
                     onAuthStateChanged(auth, (user) => {
                         if (user) {
                             activeUser = user;
                             isFirebaseConnected = true;
                             showToast("เชื่อมต่อคลาวด์แล้ว", "ข้อมูลทำการซิงค์แบบสดเรียลไทม์", "emerald");
-                            // Load data from Firebase
                             listenToInspectionUpdates();
                         }
                     });
@@ -602,20 +593,17 @@
                     useMockLocalDatabase();
                 }
             } catch (err) {
-                console.warn("Firebase config not ready. Initializing offline standalone mode:", err);
+                console.warn("Firestore initialization failed. Fallback to Local DB:", err);
                 useMockLocalDatabase();
             }
         };
 
-        // Standalone Local Storage implementation (Rule 1 Compliant path structure fallback)
         const useMockLocalDatabase = () => {
             isFirebaseConnected = false;
-            showToast("โหมดใช้งานออฟไลน์", "ข้อมูลถูกจัดเก็บไว้บนบราวเซอร์จำลอง", "amber");
+            showToast("ใช้งานโหมดออฟไลน์", "ข้อมูลถูกจัดเก็บไว้บนอุปกรณ์จำลอง", "amber");
             loadLocalInspections();
         };
 
-        // Standardized paths according to mandatory Rule 1
-        // Public Path: /artifacts/{appId}/public/data/inspections
         const getFirebaseCollectionRef = () => {
             return collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
         };
@@ -624,7 +612,7 @@
             return doc(db, 'artifacts', appId, 'public', 'data', 'inspections', docId);
         };
 
-        // Real-time listener for Firestore updates (Rule 2 simple query, filter/sort in JS)
+        // Real-time listener from Firestore
         let firebaseUnsubscriber = null;
         const listenToInspectionUpdates = () => {
             if (!isFirebaseConnected || !db) return;
@@ -638,12 +626,11 @@
 
             document.getElementById('syncIcon').classList.add('fa-spin');
 
-            // Listening via standard Snapshot listener (Rule 2 Simple non-compound query)
+            // Listen to data from Firestore (Standard non-compound query to avoid Indexing error)
             firebaseUnsubscriber = onSnapshot(queryRef, (snapshot) => {
                 activeRecords = {};
                 snapshot.forEach((doc) => {
                     const data = doc.data();
-                    // Perform date filtering entirely in JavaScript memory (Avoid Complex Queries Rule 2)
                     if (data.date === targetDate) {
                         activeRecords[data.trapId] = data;
                     }
@@ -656,13 +643,13 @@
                 
                 document.getElementById('syncIcon').classList.remove('fa-spin');
             }, (error) => {
-                console.error("Firestore listening failed: ", error);
+                console.error("Firestore listening failed, auto-fallback to local storage: ", error);
                 document.getElementById('syncIcon').classList.remove('fa-spin');
-                showToast("ข้อมูลขัดข้อง", "ไม่สามารถเชื่อมโยงเซิร์ฟเวอร์ย่อยได้", "rose");
+                showToast("ระบบคลาวด์ขัดข้อง", "เปิดโหมดออฟไลน์สำรองดึงแคชด่วนให้อัตโนมัติ", "rose");
+                useMockLocalDatabase(); // เมื่อเกิดเหตุผิดพลาดให้ดึงออฟไลน์มาทำงานแทนเพื่อไม่ให้หน้าจอว่างเปล่า!
             });
         };
 
-        // Standalone local offline data management
         const loadLocalInspections = () => {
             const stored = localStorage.getItem(`rat_inspections_${appId}`);
             const allRecords = stored ? JSON.parse(stored) : getSampleInitialRecords();
@@ -670,7 +657,6 @@
             const targetDate = dateInput.value;
             activeRecords = {};
             
-            // Extract today's date entries
             Object.values(allRecords).forEach(rec => {
                 if(rec.date === targetDate) {
                     activeRecords[rec.trapId] = rec;
@@ -683,14 +669,13 @@
             updateAnalyticsChart();
         };
 
-        // Generate beautiful mockup demonstration data for standalone user run
         const getSampleInitialRecords = () => {
             const initial = {};
             const sampleInspectors = ["สมชาย เจริญสุข", "วรรณิภา มั่นคง", "อนันต์ ยอดรักษ์"];
             const selectedDate = dateInput.value;
             
-            // Seed 12 random inspected traps for initial UI excitement
-            const sampleActiveTraps = [3, 7, 12, 18, 22, 28, 33, 44, 45, 52, 58, 61];
+            // Seed sample data
+            const sampleActiveTraps = [3, 12, 22, 33, 45, 58];
             sampleActiveTraps.forEach((trapId) => {
                 let status = "SAFE";
                 let count = 0;
@@ -698,11 +683,11 @@
                 
                 if (trapId === 12 || trapId === 33) {
                     status = "CAUGHT";
-                    count = Math.floor(Math.random() * 2) + 1;
-                    notes = "พบหนูตัวขนาดใหญ่สายพันธุ์ท้องนา";
+                    count = 1;
+                    notes = "พบหนูตัวขนาดใหญ่";
                 } else if (trapId === 45) {
                     status = "ISSUE";
-                    notes = "เหยื่อล่อถูกลมพัดกระจาย แนะนำให้เปลี่ยนแบบเม็ดแผ่น";
+                    notes = "เหยื่อล่อหมดกรง";
                 }
 
                 initial[`${selectedDate}_${trapId}`] = {
@@ -722,7 +707,6 @@
             return initial;
         };
 
-        // Helper: Find appropriate warehouse/office/perimeter zones
         const getZoneByTrapId = (id) => {
             const trap = parseInt(id);
             if (trap >= 1 && trap <= 20) return 'A';
@@ -742,7 +726,7 @@
             }
         };
 
-        // Render 63 Interactive Button nodes divided smoothly by zones
+        // 🎨 ฟังก์ชันวาดผังกล่องกรง 63 จุดหลัก
         const renderInteractiveMap = () => {
             const gridContainers = {
                 'A': document.getElementById('gridZoneA'),
@@ -756,7 +740,7 @@
                 if(container) container.innerHTML = '';
             });
 
-            // Loop 63 stations
+            // Loop and draw 63 stations
             for (let i = 1; i <= TOTAL_STATIONS; i++) {
                 const trapIdStr = i.toString();
                 const zone = getZoneByTrapId(i);
@@ -765,35 +749,29 @@
                 const container = gridContainers[zone];
                 if (!container) continue;
 
-                // Determine styling based on inspection values
                 let btnClasses = "h-12 w-full rounded-xl flex flex-col items-center justify-center font-bold text-xs shadow-md transition-all duration-150 transform hover:scale-105 active:scale-95 cursor-pointer relative trap-btn-active ";
                 let labelColor = "text-slate-100";
                 let statusDot = "";
                 let indicatorSubText = "";
 
                 if (!record) {
-                    // Unchecked state (Grey Slate)
                     btnClasses += "bg-slate-800 hover:bg-slate-750 border border-slate-700/50 hover:border-slate-600/80";
                     indicatorSubText = "รอตรวจ";
                 } else if (record.status === 'SAFE') {
-                    // Safe inspected (Bright Emerald)
                     btnClasses += "bg-emerald-600/20 hover:bg-emerald-600/30 border-2 border-emerald-500 text-emerald-400";
                     labelColor = "text-emerald-300";
                     indicatorSubText = "ปกติ";
                 } else if (record.status === 'CAUGHT') {
-                    // Rat Caught (Vibrant Danger Rose)
                     btnClasses += "bg-rose-600/20 hover:bg-rose-600/30 border-2 border-rose-500 text-rose-400 animate-pulse";
                     labelColor = "text-rose-300";
                     indicatorSubText = `พบ ${record.ratsCount} ตัว`;
                     statusDot = `<span class="absolute top-1 right-1 flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span></span>`;
                 } else if (record.status === 'ISSUE') {
-                    // Bait / Damage alert (Bright warning amber)
                     btnClasses += "bg-amber-600/20 hover:bg-amber-600/30 border-2 border-amber-500 text-amber-400";
                     labelColor = "text-amber-300";
                     indicatorSubText = "ชำรุด";
                 }
 
-                // Filter logic visualization control
                 const matchesFilter = 
                     currentFilter === 'ALL' ||
                     (currentFilter === 'UNCHECKED' && !record) ||
@@ -816,11 +794,8 @@
             }
         };
 
-        // Filter Traps Grid Map based on status buttons
         window.filterTraps = (filterType) => {
             currentFilter = filterType;
-            
-            // Remove active stylings on buttons
             const filterButtons = ['ALL', 'UNCHECKED', 'SAFE', 'CAUGHT', 'ISSUE'];
             filterButtons.forEach((type) => {
                 const btn = document.getElementById(`btnFilter-${type}`);
@@ -832,15 +807,12 @@
                     btn.className = "px-3 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all border border-slate-700/50";
                 }
             });
-
             renderInteractiveMap();
         };
 
-        // Localized search within the daily inspected history list
         window.searchInspectionLogs = () => {
             const input = document.getElementById('logSearch').value.toLowerCase();
             const logItems = document.querySelectorAll('.log-item');
-            
             logItems.forEach((item) => {
                 const text = item.textContent.toLowerCase();
                 if (text.includes(input)) {
@@ -851,18 +823,15 @@
             });
         };
 
-        // Compute and display metrics & statistics
         const updateDashboardKPIs = () => {
             const inspectedList = Object.values(activeRecords);
             const inspectedCount = inspectedList.length;
             const completionPercent = Math.round((inspectedCount / TOTAL_STATIONS) * 100) || 0;
 
-            // Inspected Progress
             document.getElementById('lblInspectedCount').innerText = inspectedCount;
             document.getElementById('badgeCompletionPercent').innerText = `${completionPercent}%`;
             document.getElementById('progressCompletion').style.width = `${completionPercent}%`;
 
-            // Rats Count caught
             const totalRats = inspectedList.reduce((acc, curr) => acc + (parseInt(curr.ratsCount) || 0), 0);
             const caughtStations = inspectedList.filter(rec => rec.status === 'CAUGHT').length;
             document.getElementById('lblTotalRats').innerText = totalRats;
@@ -877,13 +846,11 @@
                 badgeCaughtAlert.className = "text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold";
             }
 
-            // Safe Stations Counter
             const safeCount = inspectedList.filter(rec => rec.status === 'SAFE').length;
             document.getElementById('lblSafeCount').innerText = safeCount;
             const remaining = TOTAL_STATIONS - inspectedCount;
             document.getElementById('lblRemainingSafe').innerText = remaining > 0 ? `เหลือรอการตรวจสอบอีก ${remaining} จุด` : "ตรวจเช็คเสร็จสิ้นครบ 100% แล้ว";
 
-            // Issues (Maintenance / No bait)
             const issuesCount = inspectedList.filter(rec => rec.status === 'ISSUE').length;
             document.getElementById('lblIssuesCount').innerText = issuesCount;
             const badgeDamaged = document.getElementById('badgeDamaged');
@@ -896,7 +863,6 @@
             }
         };
 
-        // Populates the Timeline inspection feed on the right panel
         const updateLogTimeline = () => {
             const timelineContainer = document.getElementById('timelineLogsContainer');
             const logs = Object.values(activeRecords);
@@ -911,7 +877,6 @@
                 return;
             }
 
-            // Sort logs by newest updated timestamp
             logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             timelineContainer.innerHTML = '';
@@ -963,7 +928,6 @@
             });
         };
 
-        // Load analytical doughnut chart distribution
         const updateAnalyticsChart = () => {
             const ctx = document.getElementById('chartStatusBreakdown').getContext('2d');
             
@@ -978,10 +942,10 @@
                 datasets: [{
                     data: [totalUnchecked, totalSafe, totalCaught, totalIssues],
                     backgroundColor: [
-                        '#475569', // Gray Slate (Unchecked)
-                        '#10b981', // Emerald (Safe)
-                        '#f43f5e', // Rose (Caught)
-                        '#f59e0b'  // Amber (Issues)
+                        '#475569', 
+                        '#10b981', 
+                        '#f43f5e', 
+                        '#f59e0b'  
                     ],
                     borderWidth: 2,
                     borderColor: '#1e293b',
@@ -990,7 +954,6 @@
             };
 
             if (chartInstance) {
-                // Keep chart updated smoothly without flickering
                 chartInstance.data = chartData;
                 chartInstance.update();
             } else {
@@ -1019,7 +982,6 @@
             }
         };
 
-        // Triggered upon clicking a single grid trap
         window.openInspectionModal = (trapId) => {
             const trapIdStr = trapId.toString();
             const zone = getZoneByTrapId(trapId);
@@ -1027,25 +989,20 @@
             document.getElementById('formTrapId').value = trapIdStr;
             document.getElementById('formZone').value = zone;
             
-            // Format labels inside the inspection dialog box
             document.getElementById('modalTrapBadge').innerHTML = `<span class="text-sm font-extrabold">#${trapIdStr.padStart(2, '0')}</span>`;
             document.getElementById('modalTitle').innerText = `บันทึกข้อมูลกรงดักหนู #${trapIdStr.padStart(2, '0')}`;
             document.getElementById('modalSubtitle').innerText = `ตำแหน่งตรวจวัด: ${getZoneLabel(zone)}`;
 
-            // Auto fill previous inspector name from Local Storage to save time!
             const lastInspector = localStorage.getItem('last_inspector_name');
             if (lastInspector) {
                 document.getElementById('formInspector').value = lastInspector;
             }
 
-            // Check if record exists for editing
             const existing = activeRecords[trapIdStr];
             if (existing) {
-                // Pre-fill form values
                 document.getElementById('formInspector').value = existing.inspector;
                 document.getElementById('formNotes').value = existing.notes || "";
                 
-                // Select matching status radio button
                 const radios = document.getElementsByName('formStatus');
                 radios.forEach((radio) => {
                     if (radio.value === existing.status) {
@@ -1058,7 +1015,6 @@
                     document.getElementById('formRatsCount').value = existing.ratsCount;
                 }
             } else {
-                // Clear fields default to "SAFE"
                 document.getElementById('formNotes').value = "";
                 document.getElementById('formRatsCount').value = 1;
                 const radios = document.getElementsByName('formStatus');
@@ -1070,7 +1026,6 @@
                 });
             }
 
-            // Reveal modal
             document.getElementById('modalInspection').classList.remove('hidden');
         };
 
@@ -1087,7 +1042,6 @@
             }
         };
 
-        // Individual Submissions
         window.submitInspection = async (event) => {
             event.preventDefault();
             
@@ -1096,7 +1050,6 @@
             const inspector = document.getElementById('formInspector').value.trim();
             const notes = document.getElementById('formNotes').value.trim();
             
-            // Get checked status
             let status = 'SAFE';
             const radios = document.getElementsByName('formStatus');
             radios.forEach((r) => { if (r.checked) status = r.value; });
@@ -1105,7 +1058,6 @@
             const targetDate = dateInput.value;
             const documentId = `${targetDate}_${trapId}`;
 
-            // Save inspector name to speed up next checks
             localStorage.setItem('last_inspector_name', inspector);
 
             const reportPayload = {
@@ -1123,13 +1075,12 @@
 
             if (isFirebaseConnected && db) {
                 try {
-                    // Rule 1: Save using public/private structured path
                     const docRef = getFirebaseDocRef(documentId);
                     await setDoc(docRef, reportPayload);
-                    showToast("บันทึกสำเร็จ", `ข้อมูลกรงดักที่ #${trapId.padStart(2, '0')} ถูกอัปโหลดแล้ว`, "emerald");
+                    showToast("บันทึกสำเร็จ", `ข้อมูลกรงดักที่ #${trapId.padStart(2, '0')} ถูกส่งขึ้นระบบคลาวด์แล้ว`, "emerald");
                 } catch (error) {
-                    console.error("Firestore writing error: ", error);
-                    showToast("เชื่อมต่อขัดข้อง", "บันทึกในอุปกรณ์ทดแทนชั่วคราว", "rose");
+                    console.error("Firestore writing error fallback to local storage: ", error);
+                    showToast("บันทึกลงเครื่อง", "บันทึกข้อมูลในบราวเซอร์เนื่องจากสัญญาณขัดข้อง", "rose");
                     fallbackSaveLocal(documentId, reportPayload);
                 }
             } else {
@@ -1139,7 +1090,6 @@
             closeInspectionModal();
         };
 
-        // Offline Fallback Save Local
         const fallbackSaveLocal = (docId, payload) => {
             const stored = localStorage.getItem(`rat_inspections_${appId}`);
             const allRecords = stored ? JSON.parse(stored) : getSampleInitialRecords();
@@ -1147,14 +1097,11 @@
             allRecords[docId] = payload;
             localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
             
-            // Reload local
             loadLocalInspections();
-            showToast("บันทึกข้อมูลแล้ว", "เก็บข้อมูลไว้บนบราวเซอร์สำเร็จ", "emerald");
+            showToast("บันทึกออฟไลน์สำเร็จ", "ข้อมูลถูกจัดเก็บไว้บนอุปกรณ์ของคุณแล้ว", "emerald");
         };
 
-        // Quick Actions: Bulk Inspections (Mark remaining unchecked items as SAFE)
         window.openBulkUpdateModal = () => {
-            // Preset inspector
             const lastInspector = localStorage.getItem('last_inspector_name');
             if (lastInspector) {
                 document.getElementById('bulkInspector').value = lastInspector;
@@ -1169,7 +1116,7 @@
         window.submitBulkSafe = async () => {
             const inspectorName = document.getElementById('bulkInspector').value.trim();
             if (!inspectorName) {
-                showToast("กรอกชื่อพนักงาน", "กรุณาระบุชื่อพนักงานผู้รับผิดชอบก่อนยืนยัน", "amber");
+                showToast("ป้อนชื่อพนักงาน", "กรุณาระบุชื่อพนักงานผู้ดูแลความปลอดภัย", "amber");
                 return;
             }
 
@@ -1177,10 +1124,8 @@
             const targetDate = dateInput.value;
             const updatedItems = [];
 
-            // Loop and batch construct values for remaining unchecked traps
             for (let i = 1; i <= TOTAL_STATIONS; i++) {
                 const trapIdStr = i.toString();
-                // Check if already has a record for today
                 if (!activeRecords[trapIdStr]) {
                     const documentId = `${targetDate}_${trapIdStr}`;
                     const payload = {
@@ -1190,7 +1135,7 @@
                         status: 'SAFE',
                         ratsCount: 0,
                         inspector: inspectorName,
-                        notes: "ตรวจด่วนอัตโนมัติ",
+                        notes: "ตรวจด่วนความเร็วสูง",
                         date: targetDate,
                         timestamp: new Date().toISOString(),
                         nodeId: activeNodeId
@@ -1200,22 +1145,20 @@
             }
 
             if (updatedItems.length === 0) {
-                showToast("ไม่มีรายการค้างตรวจ", "ทุกจุดตรวจมีผลบันทึกครบถ้วนแล้ววันนี้", "amber");
+                showToast("ไม่มีกรงค้างตรวจ", "บันทึกผลตรวจสอบครบ 63 จุดแล้วในวันนี้", "amber");
                 closeBulkModal();
                 return;
             }
 
-            // Execute Batch save
             if (isFirebaseConnected && db) {
                 try {
-                    // Perform writing iteratively (avoids complex batches and respects Rule 1)
                     for (const item of updatedItems) {
                         const docRef = getFirebaseDocRef(item.id);
                         await setDoc(docRef, item);
                     }
-                    showToast("บันทึกด่วนสำเร็จ", `อัปเดตสถานะปกติ ${updatedItems.length} จุดเรียบร้อย`, "emerald");
+                    showToast("บันทึกด่วนสำเร็จ", `ส่งรายงานคลาวด์เพิ่ม ${updatedItems.length} จุดตรวจ`, "emerald");
                 } catch (error) {
-                    console.error("Batch save error: ", error);
+                    console.error("Bulk upload failure: ", error);
                     fallbackBulkSaveLocal(updatedItems);
                 }
             } else {
@@ -1235,10 +1178,9 @@
 
             localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
             loadLocalInspections();
-            showToast("บันทึกด่วนสำเร็จ (Local)", `บันทึกค่าสถานะปกติจำนวน ${payloadList.length} จุดตรวจ`, "emerald");
+            showToast("ลงผลตรวจด่วนแล้ว (Local)", `บันทึกสถานะปกติสำเร็จจำนวน ${payloadList.length} จุดตรวจ`, "emerald");
         };
 
-        // Delete Inspection log
         window.deleteInspectionReport = async (trapId) => {
             const targetDate = dateInput.value;
             const documentId = `${targetDate}_${trapId}`;
@@ -1249,7 +1191,7 @@
                     await deleteDoc(docRef);
                     showToast("ลบรายการแล้ว", `ยกเลิกผลการตรวจจุดดัก #${trapId.padStart(2, '0')}`, "amber");
                 } catch (error) {
-                    console.error("Deletion error: ", error);
+                    console.error("Deletion failure: ", error);
                     fallbackDeleteLocal(documentId);
                 }
             } else {
@@ -1265,22 +1207,21 @@
                     delete allRecords[docId];
                     localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
                     loadLocalInspections();
-                    showToast("ลบข้อมูลสำเร็จ", "ลบรายการประวัติประวัติออกจากบราวเซอร์", "amber");
+                    showToast("ลบข้อมูลประวัติออกแล้ว", "ถอนประวัติผลตรวจชิ้นนี้เสร็จสิ้น", "amber");
                 }
             }
         };
 
-        // Clear All Records for current chosen date
         window.clearAllToday = async () => {
             const targetDate = dateInput.value;
             const trapsToClear = Object.keys(activeRecords);
 
             if (trapsToClear.length === 0) {
-                showToast("ไม่มีข้อมูล", "วันนี้ยังไม่มีผลตรวจที่ลงทะเบียนไว้", "amber");
+                showToast("ไม่มีข้อมูลประวัติ", "วันนี้ยังไม่มีกิจกรรมที่ลงบันทึกรายงาน", "amber");
                 return;
             }
 
-            if (!confirm(`คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลตรวจเช็คทั้งหมด (${trapsToClear.length} จุด) ของวันที่ ${targetDate}?`)) {
+            if (!confirm(`คุณแน่ใจหรือว่าต้องการลบล้างผลตรวจทั้งหมด (${trapsToClear.length} กรง) ของวันที่ ${targetDate}?`)) {
                 return;
             }
 
@@ -1315,21 +1256,18 @@
             }
         };
 
-        // Export current inspected data to CSV
         window.exportToCSV = () => {
             const date = dateInput.value;
             const records = Object.values(activeRecords);
 
             if (records.length === 0) {
-                showToast("ไม่มีข้อมูลให้ส่งออก", "กรุณาลงผลตรวจอย่างน้อย 1 จุดเพื่อออกรายงาน", "amber");
+                showToast("ไม่มีรายงานให้ส่งออก", "กรุณาบันทึกผลตรวจสอบกรงหนูก่อนส่งออก", "amber");
                 return;
             }
 
-            // Build CSV content strings
-            let csvContent = "\uFEFF"; // Thai font support in Excel (UTF-8 BOM)
+            let csvContent = "\uFEFF"; 
             csvContent += "หมายเลขกรง,พื้นที่โซน,สถานะตรวจเช็ค,จำนวนหนูที่จับได้ (ตัว),ชื่อพนักงานผู้บันทึก,วันเวลาตรวจสอบ,หมายเหตุคำอธิบาย\n";
 
-            // Add all 63 items regardless of completion (shows blank if unchecked)
             for (let i = 1; i <= TOTAL_STATIONS; i++) {
                 const record = activeRecords[i.toString()];
                 const zoneLabel = getZoneLabel(getZoneByTrapId(i));
@@ -1346,7 +1284,6 @@
                 }
             }
 
-            // Create invisible temporary download anchor
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
@@ -1358,7 +1295,6 @@
             showToast("ส่งออกข้อมูลสำเร็จ", `รายงานถูกดาวน์โหลดลงในเครื่องของคุณแล้ว`, "emerald");
         };
 
-        // Notification systems Toast
         window.showToast = (title, message, theme = "emerald") => {
             const toast = document.getElementById('toastNotification');
             const tTitle = document.getElementById('toastTitle');
@@ -1369,7 +1305,6 @@
             tTitle.innerText = title;
             tMsg.innerText = message;
 
-            // Reset icon class
             tIcon.className = "fa-solid ";
             if (theme === "emerald") {
                 tIcon.classList.add("fa-circle-check");
@@ -1382,18 +1317,15 @@
                 tIconContainer.className = "w-8 h-8 rounded-full flex items-center justify-center text-rose-400 bg-rose-500/10";
             }
 
-            // Animate In
             toast.classList.remove('translate-y-12', 'opacity-0');
             toast.classList.add('translate-y-0', 'opacity-100');
 
-            // Timeout to dismiss
             setTimeout(() => {
                 toast.classList.remove('translate-y-0', 'opacity-100');
                 toast.classList.add('translate-y-12', 'opacity-0');
             }, 3500);
         };
 
-        // Date Change Event Handler
         dateInput.addEventListener('change', () => {
             if (isFirebaseConnected) {
                 listenToInspectionUpdates();
@@ -1403,18 +1335,23 @@
             showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
         });
 
-        // Trigger Database Connection upon window load
+        // 🌟 โหลดหน้าจอและวาดกรงทันที 63 กรงตั้งแต่เริ่มแรกเปิดหน้าจอ
         window.onload = () => {
+            // 1. สั่งวาดและคำนวณ KPI เริ่มแรกทันที (เพื่อแก้ปัญหาหน้าจอว่างเปล่า)
+            renderInteractiveMap();
+            updateDashboardKPIs();
+            updateAnalyticsChart();
+
+            // 2. ค่อย ๆ เรียกเริ่มการซิงค์ข้อมูลกับฐานข้อมูล
             initializeRealtimeDatabase();
             
-            // Manual sync button
             document.getElementById('btnSync').addEventListener('click', () => {
                 if (isFirebaseConnected) {
                     listenToInspectionUpdates();
                     showToast("ซิงค์เรียบร้อย", "อัปเดตข้อมูลจากเซิร์ฟเวอร์หลักล่าสุด", "emerald");
                 } else {
                     loadLocalInspections();
-                    showToast("อัปเดตแล้ว (Offline)", "ข้อมูลได้รับการเรียกดึงจากแคชเรียบร้อย", "emerald");
+                    showToast("อัปเดตแล้ว (Offline)", "ข้อมูลได้รับการดึงจากหน่วยความจำเรียบร้อย", "emerald");
                 }
             });
         };
