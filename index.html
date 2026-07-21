@@ -66,7 +66,7 @@
                     </div>
                     
                     <button id="btnSync" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-700/50 rounded-xl transition duration-200 text-slate-300 hover:text-emerald-400" title="ซิงค์ข้อมูลใหม่">
-                        <i class="fa-solid fa-rotate animate-spin-hover" id="syncIcon"></i>
+                        <i class="fa-solid fa-rotate" id="syncIcon"></i>
                     </button>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                 </div>
             </div>
 
-            <!-- Card 3: Safe Stations (Inspected with 0 rat) -->
+            <!-- Card 3: Safe Stations -->
             <div class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/40 shadow-xl flex flex-col justify-between">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">สถานะปกติ</span>
@@ -208,7 +208,7 @@
                         </span>
                         <span class="flex items-center space-x-1">
                             <span class="w-2.5 h-2.5 rounded bg-amber-500 inline-block"></span>
-                            <span>เหยื่อหมด/ชำรุด</span>
+                            <span>ชำรุด</span>
                         </span>
                     </div>
                 </div>
@@ -498,7 +498,7 @@
         </div>
     </div>
 
-    <!-- Modal: Confirm Delete All (Replaces native confirm() to comply with guidelines) -->
+    <!-- Modal: Confirm Delete All -->
     <div id="modalConfirmClear" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeConfirmClearModal()"></div>
@@ -558,7 +558,7 @@
     <!-- Firebase Connection script with fallback strategy -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // =========================================================================
@@ -583,8 +583,19 @@
         let chartInstance = null; 
         let isFirebaseConnected = false;
         
+        // ฟังก์ชันช่วยจัดรูปแบบวันที่ตามเวลาท้องถิ่น (Local Browser Timezone ในไทย) ป้องกันปัญหาต่าง Timezone
+        const getLocalDateString = () => {
+            const d = new Date();
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
         const dateInput = document.getElementById('inspectionDate');
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = getLocalDateString();
+        
+        // กำหนดค่าตั้งต้นเป็นวันปัจจุบันในไทย และล็อกไม่ให้เลือกวันข้างหน้า
         dateInput.value = todayStr;
         dateInput.max = todayStr; 
 
@@ -602,7 +613,7 @@
 
         const appId = 'smart-rat-trap-monitor';
 
-        // 🚀 ฟังก์ชันเริ่มเชื่อมระบบฐานข้อมูล
+        // เริ่มเชื่อมระบบฐานข้อมูล
         const initializeRealtimeDatabase = async () => {
             try {
                 if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "AIzaSy...") {
@@ -610,7 +621,7 @@
                     auth = getAuth(firebaseApp);
                     db = getFirestore(firebaseApp);
 
-                    // Sign in anonymously for access permission (Rule 3)
+                    // Sign in anonymously for access permission
                     await signInAnonymously(auth);
 
                     onAuthStateChanged(auth, (user) => {
@@ -636,7 +647,7 @@
             loadLocalInspections();
         };
 
-        // Firestore Paths (CRITICAL - RULE 1 Compliance)
+        // Firestore Paths (CRITICAL)
         const getFirebaseCollectionRef = () => {
             return collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
         };
@@ -648,7 +659,7 @@
         // Real-time listener from Firestore
         let firebaseUnsubscriber = null;
         const listenToInspectionUpdates = () => {
-            if (!isFirebaseConnected || !db || !auth.currentUser) return; // Guard logic
+            if (!isFirebaseConnected || !db || !auth.currentUser) return; 
             
             if (firebaseUnsubscriber) {
                 firebaseUnsubscriber();
@@ -659,7 +670,6 @@
 
             document.getElementById('syncIcon').classList.add('fa-spin');
 
-            // Listening to complete collection to avoid index generation failures (RULE 2)
             firebaseUnsubscriber = onSnapshot(queryRef, (snapshot) => {
                 activeRecords = {};
                 snapshot.forEach((doc) => {
@@ -759,7 +769,7 @@
             }
         };
 
-        // 🎨 ฟังก์ชันวาดผังกล่องกรง 63 จุดหลัก
+        // วาดผังกล่องกรง 63 จุดหลัก
         const renderInteractiveMap = () => {
             const gridContainers = {
                 'A': document.getElementById('gridZoneA'),
@@ -1245,7 +1255,7 @@
             }
         };
 
-        // Dialog Confirmation Setup instead of window.confirm
+        // Dialog Confirmation Setup
         window.triggerClearAllToday = () => {
             const trapsToClear = Object.keys(activeRecords);
             if (trapsToClear.length === 0) {
@@ -1367,6 +1377,7 @@
             }, 3500);
         };
 
+        // เมื่อพนักงานสลับดูวันที่บนปฏิทิน
         dateInput.addEventListener('change', () => {
             if (isFirebaseConnected) {
                 listenToInspectionUpdates();
@@ -1376,14 +1387,14 @@
             showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
         });
 
-        // 🌟 โหลดหน้าจอและวาดกรงทันที 63 กรงตั้งแต่เริ่มแรกเปิดหน้าจอ
+        // โหลดหน้าจอและวาดกรงทันที 63 กรงตั้งแต่เริ่มแรกเปิดหน้าจอ
         window.onload = () => {
             // 1. สั่งวาดและคำนวณ KPI เริ่มแรกทันที (เพื่อแก้ปัญหาหน้าจอว่างเปล่า)
             renderInteractiveMap();
             updateDashboardKPIs();
             updateAnalyticsChart();
 
-            // 2. ค่อย ๆ เรียกเริ่มการซิงค์ข้อมูลกับฐานข้อมูล
+            // 2. เริ่มการเชื่อมต่อกับระบบฐานข้อมูล Firebase คลาวด์
             initializeRealtimeDatabase();
             
             document.getElementById('btnSync').addEventListener('click', () => {
