@@ -55,8 +55,15 @@
                     </div>
                 </div>
 
-                <!-- Date Selector and Quick Action -->
-                <div class="flex items-center space-x-3">
+                <!-- Date Selector and Executive Dashboard Action -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <!-- Executive Summary Dashboard Button -->
+                    <button type="button" onclick="openSummaryDashboardModal()" class="px-3 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition duration-200 flex items-center space-x-1.5 border border-indigo-400/30">
+                        <i class="fa-solid fa-chart-line text-amber-300"></i>
+                        <span class="hidden md:inline">📊 สรุปสถิติสะสม/รายเดือน</span>
+                        <span class="md:hidden">📊 สรุปภาพรวม</span>
+                    </button>
+
                     <div class="flex items-center bg-slate-900/80 border border-slate-700 rounded-xl overflow-hidden shadow-inner">
                         <button type="button" onclick="adjustDate(-1)" class="px-2.5 py-2 hover:bg-slate-750 text-slate-400 hover:text-indigo-400 transition" title="วันก่อนหน้า">
                             <i class="fa-solid fa-chevron-left text-xs"></i>
@@ -90,7 +97,7 @@
             <!-- Card 1: Inspection Completion Progress -->
             <div class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/40 shadow-xl flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">ตรวจเช็คแล้ว</span>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">ตรวจเช็คแล้ว (วันนี้)</span>
                     <span class="text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold" id="badgeCompletionPercent">0%</span>
                 </div>
                 <div class="mt-4 flex items-baseline space-x-2">
@@ -106,7 +113,7 @@
             <!-- Card 2: Caught Rats Count -->
             <div class="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/40 shadow-xl flex flex-col justify-between">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">พบหนู (ตัว)</span>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">พบหนู (ตัววันนี้)</span>
                     <span class="text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-full text-[10px] font-bold" id="badgeCaughtAlert">ปกติ</span>
                 </div>
                 <div class="mt-4 flex items-baseline space-x-2">
@@ -349,6 +356,159 @@
         </div>
     </main>
 
+    <!-- Modal: Executive Summary Multi-Day Dashboard -->
+    <div id="modalSummaryDashboard" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity" onclick="closeSummaryDashboardModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-slate-900 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-slate-700/80">
+                
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 px-6 py-4 flex justify-between items-center border-b border-slate-700/60">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 border border-indigo-400/40 flex items-center justify-center text-indigo-300">
+                            <i class="fa-solid fa-chart-pie text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-100 flex items-center space-x-2">
+                                <span>แดชบอร์ดสรุปสถิติสะสมภาพรวม [DEMO]</span>
+                                <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] px-2 py-0.5 rounded-full">Executive Report</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">วิเคราะห์ยอดรวมสะสมหลายวันสำหรับผู้บริหารและฝ่าย QA</p>
+                        </div>
+                    </div>
+                    <button onclick="closeSummaryDashboardModal()" class="text-slate-400 hover:text-slate-200 transition">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+                    
+                    <!-- Date Range Filter Tabs -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-800/60 p-2.5 rounded-2xl border border-slate-700/50">
+                        <span class="text-xs font-bold text-slate-300 pl-2"><i class="fa-solid fa-filter text-indigo-400 mr-1.5"></i>เลือกระระยะเวลาที่ต้องการดู:</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button onclick="changeSummaryRange('LAST_7')" id="btnRange-LAST_7" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white transition">
+                                7 วันล่าสุด
+                            </button>
+                            <button onclick="changeSummaryRange('LAST_30')" id="btnRange-LAST_30" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700">
+                                30 วันล่าสุด
+                            </button>
+                            <button onclick="changeSummaryRange('THIS_MONTH')" id="btnRange-THIS_MONTH" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700">
+                                เดือนนี้
+                            </button>
+                            <button onclick="changeSummaryRange('ALL_TIME')" id="btnRange-ALL_TIME" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700">
+                                ทั้งหมดสะสม
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Aggregate Summary Cards Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-slate-800/80 rounded-2xl p-4 border border-slate-700/60 shadow-lg">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">หนูจับได้รวมสะสม</span>
+                            <div class="mt-2 flex items-baseline space-x-1.5">
+                                <span class="text-3xl font-extrabold text-rose-500" id="summaryTotalRats">0</span>
+                                <span class="text-xs text-slate-400">ตัว</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1">ยอดรวมยอดติดกรงช่วงเวลานี้</p>
+                        </div>
+
+                        <div class="bg-slate-800/80 rounded-2xl p-4 border border-slate-700/60 shadow-lg">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">จำนวนครั้งการลงตรวจ</span>
+                            <div class="mt-2 flex items-baseline space-x-1.5">
+                                <span class="text-3xl font-extrabold text-indigo-400" id="summaryTotalInspections">0</span>
+                                <span class="text-xs text-slate-400">รายการ</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1">ยอดบันทึกประวัติสะสมรวม</p>
+                        </div>
+
+                        <div class="bg-slate-800/80 rounded-2xl p-4 border border-slate-700/60 shadow-lg">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">โซนพบหนูมากที่สุด</span>
+                            <div class="mt-2">
+                                <span class="text-2xl font-extrabold text-amber-400" id="summaryHotspotZone">-</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1" id="summaryHotspotZoneCount">0 ตัวที่พบในโซนนี้</p>
+                        </div>
+
+                        <div class="bg-slate-800/80 rounded-2xl p-4 border border-slate-700/60 shadow-lg">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">พบปัญหากรงชำรุด</span>
+                            <div class="mt-2 flex items-baseline space-x-1.5">
+                                <span class="text-3xl font-extrabold text-amber-500" id="summaryTotalIssues">0</span>
+                                <span class="text-xs text-slate-400">ครั้ง</span>
+                            </div>
+                            <p class="text-[10px] text-slate-500 mt-1">ต้องเข้าดำเนินการบำรุงรักษา</p>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Layout Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Top 5 Hotspot Traps -->
+                        <div class="bg-slate-800/40 rounded-2xl p-4 border border-slate-800 space-y-3">
+                            <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center justify-between">
+                                <span><i class="fa-solid fa-fire text-rose-500 mr-1.5"></i>5 อันดับกรงที่ติดหนูบ่อยที่สุด</span>
+                                <span class="text-[10px] text-slate-500 font-normal">Top Hotspot Traps</span>
+                            </h4>
+                            <div class="space-y-2" id="summaryHotspotTrapsList">
+                                <!-- JS Populates -->
+                            </div>
+                        </div>
+
+                        <!-- Zone Breakdown Stats -->
+                        <div class="bg-slate-800/40 rounded-2xl p-4 border border-slate-800 space-y-3">
+                            <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center justify-between">
+                                <span><i class="fa-solid fa-layer-group text-indigo-400 mr-1.5"></i>สัดส่วนจำนวนหนูจำแนกตามโซน</span>
+                                <span class="text-[10px] text-slate-500 font-normal">Zone Distribution</span>
+                            </h4>
+                            <div class="space-y-2.5" id="summaryZoneBreakdownList">
+                                <!-- JS Populates -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Daily Comparison Table -->
+                    <div class="bg-slate-800/40 rounded-2xl p-4 border border-slate-800 space-y-3">
+                        <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center justify-between">
+                            <span><i class="fa-solid fa-table-list text-emerald-400 mr-1.5"></i>ตารางสรุปสถิติจำนวนย้อนหลังรายวัน</span>
+                            <span class="text-[10px] text-slate-500 font-normal">Daily Breakdown History</span>
+                        </h4>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-900 text-slate-400 font-bold uppercase text-[10px] border-b border-slate-700">
+                                    <tr>
+                                        <th class="py-2.5 px-3">วันที่</th>
+                                        <th class="py-2.5 px-3">ตรวจเช็คแล้ว</th>
+                                        <th class="py-2.5 px-3">สถานะปกติ</th>
+                                        <th class="py-2.5 px-3 text-rose-400">พบหนู (ตัว)</th>
+                                        <th class="py-2.5 px-3 text-amber-400">ชำรุด/เหยื่อหมด</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-800" id="summaryDailyTableBody">
+                                    <!-- JS Populates Daily Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="bg-slate-900 px-6 py-3 border-t border-slate-800 flex justify-between items-center text-xs">
+                    <span class="text-slate-500">ข้อมูลโหมดออฟไลน์เดโม่จำลองสำหรับการนำเสนอ</span>
+                    <button type="button" onclick="closeSummaryDashboardModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl transition">
+                        ปิดหน้าต่าง
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Individual Inspection Report Form -->
     <div id="modalInspection" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <!-- Backdrop -->
@@ -395,11 +555,11 @@
                             <input type="text" id="formInspector" required list="staffList" placeholder="พิมพ์ชื่อผู้ตรวจสอบ..."
                                    class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 placeholder-slate-500 text-sm focus:outline-none transition-all">
                             <datalist id="staffList">
-                                <option value="สมชาย เจริญสุข">
-                                <option value="วรรณิภา มั่นคง">
-                                <option value="อนันต์ ยอดรักษ์">
-                                <option value="ปิยะพงษ์ เลิศวิไล">
-                                <option value="กิตติศักดิ์ ศรีสุข">
+                                <option value="สมชาย เจริญสุข (DEMO)">
+                                <option value="วรรณิภา มั่นคง (DEMO)">
+                                <option value="อนันต์ ยอดรักษ์ (DEMO)">
+                                <option value="ปิยะพงษ์ เลิศวิไล (DEMO)">
+                                <option value="กิตติศักดิ์ ศรีสุข (DEMO)">
                             </datalist>
                         </div>
                     </div>
@@ -563,44 +723,22 @@
         }
     </style>
 
-    <!-- Firebase Connection script with fallback strategy -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // =========================================================================
-        // ⚙️ ส่วนแก้ไขรหัส FIREBASE CONFIG: (ถูกถอดออกสำหรับเวอร์ชัน DEMO ออฟไลน์)
-        // =========================================================================
-        const firebaseConfig = {
-            apiKey: "",
-            authDomain: "",
-            projectId: "",
-            storageBucket: "",
-            messagingSenderId: "",
-            appId: "",
-            measurementId: ""
-        };
-        // =========================================================================
-
+    <!-- Offline DEMO Application Script -->
+    <script>
         const TOTAL_STATIONS = 63;
-        let firebaseApp, db, auth;
-        let activeUser = null;
         let activeRecords = {}; 
+        let allTimeStoredRecords = []; // Holds multi-day historical sample records
         let currentFilter = 'ALL'; 
         let chartInstance = null; 
-        let isFirebaseConnected = false;
-        
-        // ฟังก์ชันช่วยจัดรูปแบบวันที่ตามเวลาท้องถิ่น (Gregorian A.D. Safe) ป้องกันปัญหา พ.ศ. (Thai BE) เพี้ยน
-        const getLocalDateString = () => {
-            const d = new Date();
+        let activeSummaryRange = 'LAST_7';
+        const appId = 'smart-rat-trap-demo';
+
+        // Helper date string formatter (A.D. Safe)
+        const getLocalDateString = (d = new Date()) => {
             let year = d.getFullYear();
-            
-            // ตรวจสอบและแปลงจาก พ.ศ. ให้เป็น ค.ศ. (ถ้าปีมากกว่า 2400 จะถือว่าเป็นปี พ.ศ. ทันที)
             if (year > 2400) {
                 year = year - 543;
             }
-            
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
@@ -608,21 +746,15 @@
 
         const dateInput = document.getElementById('inspectionDate');
         const todayStr = getLocalDateString();
-        
-        // กำหนดค่าตั้งต้นเป็นวันปัจจุบันในไทย
         dateInput.value = todayStr;
 
-        // ฟังก์ชันสำหรับกดปุ่มลูกศร ◀ หรือ ▶ เพื่อเลื่อนเปลี่ยนวันสะดวกรวดเร็ว (รองรับปฏิทิน พ.ศ./ค.ศ. 100%)
+        // Quick date increment / decrement
         window.adjustDate = (daysToAdjust) => {
             if (!dateInput.value) return;
             
             const parts = dateInput.value.split('-');
             let year = parseInt(parts[0]);
-            
-            // ป้องกันปฏิทิน พ.ศ. ซ้อนกัน
-            if (year > 2400) {
-                year = year - 543;
-            }
+            if (year > 2400) year = year - 543;
             
             const month = parseInt(parts[1]);
             const day = parseInt(parts[2]);
@@ -631,19 +763,16 @@
             currentDate.setDate(currentDate.getDate() + daysToAdjust);
             
             let newYear = currentDate.getFullYear();
-            if (newYear > 2400) {
-                newYear = newYear - 543;
-            }
+            if (newYear > 2400) newYear = newYear - 543;
             
             const newMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
             const newDay = String(currentDate.getDate()).padStart(2, '0');
             
             dateInput.value = `${newYear}-${newMonth}-${newDay}`;
-            // สั่งให้ทริกเกอร์อีเวนต์เปลี่ยนวันเพื่อให้หน้ารวมรายงานเริ่มคำนวณใหม่
             dateInput.dispatchEvent(new Event('change'));
         };
 
-        // Generate Node ID for identifying inspectors
+        // Node ID Generator
         const generateNodeId = () => {
             let nid = localStorage.getItem('inspection_node_id_demo');
             if(!nid) {
@@ -655,96 +784,20 @@
         const activeNodeId = generateNodeId();
         document.getElementById('lblUserNode').innerText = activeNodeId;
 
-        // แยกคีย์หน่วยความจำของ Demo ออกจากตัวจริง เพื่อไม่ให้ข้อมูลปะปนกันบนเบราว์เซอร์เดียวกัน
-        const appId = 'smart-rat-trap-demo';
-
-        // เริ่มเชื่อมระบบฐานข้อมูล
-        const initializeRealtimeDatabase = async () => {
-            try {
-                if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "") {
-                    firebaseApp = initializeApp(firebaseConfig);
-                    auth = getAuth(firebaseApp);
-                    db = getFirestore(firebaseApp);
-
-                    // Sign in anonymously for access permission
-                    await signInAnonymously(auth);
-
-                    onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            activeUser = user;
-                            isFirebaseConnected = true;
-                            showToast("เชื่อมต่อคลาวด์แล้ว", "ข้อมูลทำการซิงค์แบบสดเรียลไทม์", "emerald");
-                            listenToInspectionUpdates();
-                        }
-                    });
-                } else {
-                    useMockLocalDatabase();
-                }
-            } catch (err) {
-                console.warn("Firestore initialization failed. Fallback to Local DB:", err);
-                useMockLocalDatabase();
-            }
-        };
-
-        const useMockLocalDatabase = () => {
-            isFirebaseConnected = false;
-            showToast("ใช้งานโหมดเดโม่ (Offline)", "ข้อมูลจำลองจัดเก็บชั่วคราวในอุปกรณ์เครื่องนี้", "amber");
-            loadLocalInspections();
-        };
-
-        // Firestore Paths (CRITICAL)
-        const getFirebaseCollectionRef = () => {
-            return collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
-        };
-
-        const getFirebaseDocRef = (docId) => {
-            return doc(db, 'artifacts', appId, 'public', 'data', 'inspections', docId);
-        };
-
-        // Real-time listener from Firestore
-        let firebaseUnsubscriber = null;
-        const listenToInspectionUpdates = () => {
-            if (!isFirebaseConnected || !db || !auth.currentUser) return; 
-            
-            if (firebaseUnsubscriber) {
-                firebaseUnsubscriber();
-            }
-
-            const targetDate = dateInput.value;
-            const queryRef = getFirebaseCollectionRef();
-
-            document.getElementById('syncIcon').classList.add('fa-spin');
-
-            firebaseUnsubscriber = onSnapshot(queryRef, (snapshot) => {
-                activeRecords = {};
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if (data.date === targetDate) {
-                        activeRecords[data.trapId] = data;
-                    }
-                });
-                
-                renderInteractiveMap();
-                updateDashboardKPIs();
-                updateLogTimeline();
-                updateAnalyticsChart();
-                
-                document.getElementById('syncIcon').classList.remove('fa-spin');
-            }, (error) => {
-                console.error("Firestore listening failed, fallback to local storage: ", error);
-                document.getElementById('syncIcon').classList.remove('fa-spin');
-                useMockLocalDatabase(); 
-            });
-        };
-
         const loadLocalInspections = () => {
             const stored = localStorage.getItem(`rat_inspections_${appId}`);
-            const allRecords = stored ? JSON.parse(stored) : getSampleInitialRecords();
+            let allRecordsObj = stored ? JSON.parse(stored) : null;
+            
+            if (!allRecordsObj || Object.keys(allRecordsObj).length === 0) {
+                allRecordsObj = getSampleInitialRecords();
+                localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecordsObj));
+            }
             
             const targetDate = dateInput.value;
             activeRecords = {};
+            allTimeStoredRecords = Object.values(allRecordsObj);
             
-            Object.values(allRecords).forEach(rec => {
+            allTimeStoredRecords.forEach(rec => {
                 if(rec.date === targetDate) {
                     activeRecords[rec.trapId] = rec;
                 }
@@ -756,40 +809,55 @@
             updateAnalyticsChart();
         };
 
-        // ใส่ข้อมูลจำลองเริ่มต้นเพื่อให้เปิดมาแล้วเดโม่ไม่โล่งจนเกินไป ลูกค้าจะมองเห็นภาพทันที
+        // Rich Multi-day sample generator for Demo presentation
         const getSampleInitialRecords = () => {
             const initial = {};
-            const sampleInspectors = ["สมชาย เจริญสุข (DEMO)", "วรรณิภา มั่นคง (DEMO)", "อนันต์ ยอดรักษ์ (DEMO)"];
-            const selectedDate = dateInput.value;
+            const sampleInspectors = ["สมชาย เจริญสุข (DEMO)", "วรรณิภา มั่นคง (DEMO)", "อนันต์ ยอดรักษ์ (DEMO)", "ปิยะพงษ์ เลิศวิไล (DEMO)"];
             
-            // Seed sample data for preview and offline fallback
-            const sampleActiveTraps = [3, 12, 22, 33, 45, 58];
-            sampleActiveTraps.forEach((trapId) => {
-                let status = "SAFE";
-                let count = 0;
-                let notes = "";
-                
-                if (trapId === 12 || trapId === 33) {
-                    status = "CAUGHT";
-                    count = 1;
-                    notes = "ตรวจพบหนูท่อขนาดใหญ่ ติดกรงแบบสปริง";
-                } else if (trapId === 45) {
-                    status = "ISSUE";
-                    notes = "เหยื่อแป้งล่อหนูโดนน้ำเปื่อยหมดกรง ต้องเปลี่ยนใหม่";
-                }
+            // Build dates for Today, Yesterday, 2 days ago, 3 days ago, and 5 days ago
+            const datesToSeed = [];
+            for (let i = 0; i < 6; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                datesToSeed.push(getLocalDateString(d));
+            }
 
-                initial[`${selectedDate}_${trapId}`] = {
-                    id: `${selectedDate}_${trapId}`,
-                    trapId: trapId.toString(),
-                    zone: getZoneByTrapId(trapId),
-                    status: status,
-                    ratsCount: count,
-                    inspector: sampleInspectors[Math.floor(Math.random() * sampleInspectors.length)],
-                    timestamp: new Date().toISOString(),
-                    notes: notes,
-                    date: selectedDate,
-                    nodeId: 'DEMO_NODE'
-                };
+            datesToSeed.forEach((dStr, idx) => {
+                // Seed hotspot traps (e.g. traps #05, #12, #22, #33, #45)
+                const activeTraps = [5, 12, 18, 22, 33, 45, 52];
+                activeTraps.forEach((trapId) => {
+                    let status = "SAFE";
+                    let count = 0;
+                    let notes = "";
+                    
+                    // Trap 12 and 33 are frequent hotspots
+                    if (trapId === 12 || (trapId === 33 && idx % 2 === 0)) {
+                        status = "CAUGHT";
+                        count = idx === 0 ? 2 : 1;
+                        notes = "ตรวจพบหนูติดกรงแบบสปริง";
+                    } else if (trapId === 45 && idx % 3 === 0) {
+                        status = "ISSUE";
+                        notes = "เหยื่อล่อหมดกรง ต้องเปลี่ยนใหม่";
+                    } else if (trapId === 5 && idx === 1) {
+                        status = "CAUGHT";
+                        count = 1;
+                        notes = "พบหนูติดบริเวณแนวรั้ว";
+                    }
+
+                    const docId = `${dStr}_${trapId}`;
+                    initial[docId] = {
+                        id: docId,
+                        trapId: trapId.toString(),
+                        zone: getZoneByTrapId(trapId),
+                        status: status,
+                        ratsCount: count,
+                        inspector: sampleInspectors[Math.floor(Math.random() * sampleInspectors.length)],
+                        timestamp: new Date(new Date(dStr).getTime() + (8 + Math.random() * 4) * 3600000).toISOString(),
+                        notes: notes,
+                        date: dStr,
+                        nodeId: 'DEMO_NODE'
+                    };
+                });
             });
             
             return initial;
@@ -814,7 +882,6 @@
             }
         };
 
-        // วาดผังกล่องกรง 63 จุดหลัก
         const renderInteractiveMap = () => {
             const gridContainers = {
                 'A': document.getElementById('gridZoneA'),
@@ -823,12 +890,10 @@
                 'D': document.getElementById('gridZoneD')
             };
 
-            // Clear old HTML
             Object.values(gridContainers).forEach(container => {
                 if(container) container.innerHTML = '';
             });
 
-            // Loop and draw 63 stations
             for (let i = 1; i <= TOTAL_STATIONS; i++) {
                 const trapIdStr = i.toString();
                 const zone = getZoneByTrapId(i);
@@ -959,7 +1024,7 @@
                 timelineContainer.innerHTML = `
                     <div class="text-center py-12 text-slate-500 text-xs">
                         <i class="fa-solid fa-clipboard text-slate-700 text-3xl mb-3 block"></i>
-                        ไม่มีบันทึกข้อมูลสำหรับวันที่เลือก <br>เริ่มลงผลตรวจกรงหนูด้านซ้ายได้เลย!
+                        ไม่มีบันทึกข้อมูลสำหรับวันที่เลือก <br>เริ่มลงผลตรวจกรงหนูทดลองได้เลย!
                     </div>
                 `;
                 return;
@@ -1070,6 +1135,175 @@
             }
         };
 
+        // 📊 DEMO Executive Summary Multi-Day Aggregation Functions
+        window.openSummaryDashboardModal = () => {
+            renderSummaryDashboard(activeSummaryRange);
+            document.getElementById('modalSummaryDashboard').classList.remove('hidden');
+        };
+
+        window.closeSummaryDashboardModal = () => {
+            document.getElementById('modalSummaryDashboard').classList.add('hidden');
+        };
+
+        window.changeSummaryRange = (rangeType) => {
+            activeSummaryRange = rangeType;
+            const rangeButtons = ['LAST_7', 'LAST_30', 'THIS_MONTH', 'ALL_TIME'];
+            rangeButtons.forEach((type) => {
+                const btn = document.getElementById(`btnRange-${type}`);
+                if (!btn) return;
+                
+                if (type === rangeType) {
+                    btn.className = "px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white transition";
+                } else {
+                    btn.className = "px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700";
+                }
+            });
+            renderSummaryDashboard(rangeType);
+        };
+
+        const renderSummaryDashboard = (rangeType) => {
+            const today = new Date();
+            let filteredRecords = [];
+
+            if (rangeType === 'LAST_7') {
+                const cutoff = new Date();
+                cutoff.setDate(today.getDate() - 7);
+                filteredRecords = allTimeStoredRecords.filter(r => new Date(r.date) >= cutoff);
+            } else if (rangeType === 'LAST_30') {
+                const cutoff = new Date();
+                cutoff.setDate(today.getDate() - 30);
+                filteredRecords = allTimeStoredRecords.filter(r => new Date(r.date) >= cutoff);
+            } else if (rangeType === 'THIS_MONTH') {
+                const currentMonthStr = getLocalDateString().substring(0, 7);
+                filteredRecords = allTimeStoredRecords.filter(r => r.date && r.date.startsWith(currentMonthStr));
+            } else {
+                filteredRecords = [...allTimeStoredRecords];
+            }
+
+            // 1. Calculate Aggregate Numbers
+            const totalRats = filteredRecords.reduce((sum, r) => sum + (parseInt(r.ratsCount) || 0), 0);
+            const totalInspections = filteredRecords.length;
+            const totalIssues = filteredRecords.filter(r => r.status === 'ISSUE').length;
+
+            document.getElementById('summaryTotalRats').innerText = totalRats;
+            document.getElementById('summaryTotalInspections').innerText = totalInspections;
+            document.getElementById('summaryTotalIssues').innerText = totalIssues;
+
+            // 2. Zone Breakdown & Hotspot Zone
+            const zoneRatsMap = { 'A': 0, 'B': 0, 'C': 0, 'D': 0 };
+
+            filteredRecords.forEach(r => {
+                if (zoneRatsMap[r.zone] !== undefined) {
+                    zoneRatsMap[r.zone] += (parseInt(r.ratsCount) || 0);
+                }
+            });
+
+            let topZone = '-';
+            let maxZoneRats = -1;
+            Object.keys(zoneRatsMap).forEach(z => {
+                if (zoneRatsMap[z] > maxZoneRats && zoneRatsMap[z] > 0) {
+                    maxZoneRats = zoneRatsMap[z];
+                    topZone = `Zone ${z}`;
+                }
+            });
+
+            document.getElementById('summaryHotspotZone').innerText = topZone;
+            document.getElementById('summaryHotspotZoneCount').innerText = maxZoneRats > 0 ? `ติดหนูไปทั้งหมด ${maxZoneRats} ตัว` : 'ไม่มีประวัติพบหนูในโซน';
+
+            // Render Zone Breakdown Progress Bars
+            const zoneBreakdownContainer = document.getElementById('summaryZoneBreakdownList');
+            zoneBreakdownContainer.innerHTML = '';
+
+            ['A', 'B', 'C', 'D'].forEach(zCode => {
+                const ratsInZone = zoneRatsMap[zCode];
+                const percent = totalRats > 0 ? Math.round((ratsInZone / totalRats) * 100) : 0;
+                
+                const zoneHTML = `
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-slate-300">${getZoneLabel(zCode)}</span>
+                            <span class="text-rose-400 font-bold">${ratsInZone} ตัว <span class="text-slate-500 text-[10px]">(${percent}%)</span></span>
+                        </div>
+                        <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-rose-500 to-amber-500 h-2 rounded-full transition-all duration-300" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                `;
+                zoneBreakdownContainer.insertAdjacentHTML('beforeend', zoneHTML);
+            });
+
+            // 3. Top 5 Hotspot Traps
+            const trapCatchMap = {};
+            filteredRecords.forEach(r => {
+                if (r.status === 'CAUGHT') {
+                    const tid = r.trapId;
+                    if (!trapCatchMap[tid]) {
+                        trapCatchMap[tid] = { trapId: tid, zone: r.zone, count: 0 };
+                    }
+                    trapCatchMap[tid].count += (parseInt(r.ratsCount) || 1);
+                }
+            });
+
+            const sortedTraps = Object.values(trapCatchMap).sort((a, b) => b.count - a.count).slice(0, 5);
+            const hotspotContainer = document.getElementById('summaryHotspotTrapsList');
+            hotspotContainer.innerHTML = '';
+
+            if (sortedTraps.length === 0) {
+                hotspotContainer.innerHTML = `<div class="text-center py-4 text-slate-500 text-xs">ไม่พบประวัติกรงติดหนูในช่วงเวลานี้</div>`;
+            } else {
+                sortedTraps.forEach((item, idx) => {
+                    const trapHTML = `
+                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800 text-xs">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="w-5 h-5 rounded-lg bg-rose-500/20 text-rose-400 font-bold text-[10px] flex items-center justify-center">${idx + 1}</span>
+                                <div>
+                                    <span class="font-bold text-slate-200">กรง #${item.trapId.padStart(2, '0')}</span>
+                                    <span class="text-[10px] text-slate-500 ml-1.5">${getZoneLabel(item.zone)}</span>
+                                </div>
+                            </div>
+                            <span class="font-extrabold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-md text-xs">พบ ${item.count} ตัว</span>
+                        </div>
+                    `;
+                    hotspotContainer.insertAdjacentHTML('beforeend', trapHTML);
+                });
+            }
+
+            // 4. Daily Breakdown Table Grouping
+            const dailyGroupMap = {};
+            filteredRecords.forEach(r => {
+                if (!r.date) return;
+                if (!dailyGroupMap[r.date]) {
+                    dailyGroupMap[r.date] = { date: r.date, total: 0, safe: 0, caught: 0, issues: 0 };
+                }
+                dailyGroupMap[r.date].total += 1;
+                if (r.status === 'SAFE') dailyGroupMap[r.date].safe += 1;
+                if (r.status === 'CAUGHT') dailyGroupMap[r.date].caught += (parseInt(r.ratsCount) || 1);
+                if (r.status === 'ISSUE') dailyGroupMap[r.date].issues += 1;
+            });
+
+            const sortedDates = Object.keys(dailyGroupMap).sort((a, b) => new Date(b) - new Date(a));
+            const tableBody = document.getElementById('summaryDailyTableBody');
+            tableBody.innerHTML = '';
+
+            if (sortedDates.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">ไม่มีข้อมูลย้อนหลังในช่วงเวลานี้</td></tr>`;
+            } else {
+                sortedDates.forEach(dStr => {
+                    const stat = dailyGroupMap[dStr];
+                    const rowHTML = `
+                        <tr class="hover:bg-slate-800/60 transition">
+                            <td class="py-2.5 px-3 font-semibold text-slate-200">${dStr}</td>
+                            <td class="py-2.5 px-3 text-slate-400">${stat.total} จุด</td>
+                            <td class="py-2.5 px-3 text-emerald-400 font-medium">${stat.safe} จุด</td>
+                            <td class="py-2.5 px-3 text-rose-400 font-bold">${stat.caught} ตัว</td>
+                            <td class="py-2.5 px-3 text-amber-400 font-medium">${stat.issues} จุด</td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', rowHTML);
+                });
+            }
+        };
+
         window.openInspectionModal = (trapId) => {
             const trapIdStr = trapId.toString();
             const zone = getZoneByTrapId(trapId);
@@ -1130,7 +1364,7 @@
             }
         };
 
-        window.submitInspection = async (event) => {
+        window.submitInspection = (event) => {
             event.preventDefault();
             
             const trapId = document.getElementById('formTrapId').value;
@@ -1161,19 +1395,7 @@
                 nodeId: activeNodeId
             };
 
-            if (isFirebaseConnected && db) {
-                try {
-                    const docRef = getFirebaseDocRef(documentId);
-                    await setDoc(docRef, reportPayload);
-                    showToast("บันทึกสำเร็จ", `ข้อมูลกรงดักที่ #${trapId.padStart(2, '0')} ถูกส่งขึ้นระบบคลาวด์แล้ว`, "emerald");
-                } catch (error) {
-                    console.error("Firestore writing error fallback to local storage: ", error);
-                    fallbackSaveLocal(documentId, reportPayload);
-                }
-            } else {
-                fallbackSaveLocal(documentId, reportPayload);
-            }
-
+            fallbackSaveLocal(documentId, reportPayload);
             closeInspectionModal();
         };
 
@@ -1200,7 +1422,7 @@
             document.getElementById('modalBulk').classList.add('hidden');
         };
 
-        window.submitBulkSafe = async () => {
+        window.submitBulkSafe = () => {
             const inspectorName = document.getElementById('bulkInspector').value.trim();
             if (!inspectorName) {
                 showToast("ป้อนชื่อพนักงาน", "กรุณาระบุชื่อพนักงานผู้ดูแลความปลอดภัย", "amber");
@@ -1237,21 +1459,7 @@
                 return;
             }
 
-            if (isFirebaseConnected && db) {
-                try {
-                    for (const item of updatedItems) {
-                        const docRef = getFirebaseDocRef(item.id);
-                        await setDoc(docRef, item);
-                    }
-                    showToast("บันทึกด่วนสำเร็จ", `ส่งรายงานคลาวด์เพิ่ม ${updatedItems.length} จุดตรวจ`, "emerald");
-                } catch (error) {
-                    console.error("Bulk upload failure: ", error);
-                    fallbackBulkSaveLocal(updatedItems);
-                }
-            } else {
-                fallbackBulkSaveLocal(updatedItems);
-            }
-
+            fallbackBulkSaveLocal(updatedItems);
             closeBulkModal();
         };
 
@@ -1268,22 +1476,10 @@
             showToast("ลงผลตรวจด่วนแล้ว", `บันทึกสถานะปกติสำเร็จจำนวน ${payloadList.length} จุดตรวจ`, "emerald");
         };
 
-        window.deleteInspectionReport = async (trapId) => {
+        window.deleteInspectionReport = (trapId) => {
             const targetDate = dateInput.value;
             const documentId = `${targetDate}_${trapId}`;
-
-            if (isFirebaseConnected && db) {
-                try {
-                    const docRef = getFirebaseDocRef(documentId);
-                    await deleteDoc(docRef);
-                    showToast("ลบรายการแล้ว", `ยกเลิกผลการตรวจจุดดัก #${trapId.padStart(2, '0')}`, "amber");
-                } catch (error) {
-                    console.error("Deletion failure: ", error);
-                    fallbackDeleteLocal(documentId);
-                }
-            } else {
-                fallbackDeleteLocal(documentId);
-            }
+            fallbackDeleteLocal(documentId);
         };
 
         const fallbackDeleteLocal = (docId) => {
@@ -1299,7 +1495,6 @@
             }
         };
 
-        // Dialog Confirmation Setup
         window.triggerClearAllToday = () => {
             const trapsToClear = Object.keys(activeRecords);
             if (trapsToClear.length === 0) {
@@ -1315,26 +1510,11 @@
             document.getElementById('modalConfirmClear').classList.add('hidden');
         };
 
-        window.executeClearAllToday = async () => {
+        window.executeClearAllToday = () => {
             closeConfirmClearModal();
             const targetDate = dateInput.value;
             const trapsToClear = Object.keys(activeRecords);
-
-            if (isFirebaseConnected && db) {
-                try {
-                    for (const trapId of trapsToClear) {
-                        const docId = `${targetDate}_${trapId}`;
-                        const docRef = getFirebaseDocRef(docId);
-                        await deleteDoc(docRef);
-                    }
-                    showToast("ล้างประวัติวันนี้แล้ว", "ลบประวัติของวันนี้ทั้งหมดบนคลาวด์แล้ว", "amber");
-                } catch (err) {
-                    console.error("Error clearing logs: ", err);
-                    fallbackClearLocal(targetDate, trapsToClear);
-                }
-            } else {
-                fallbackClearLocal(targetDate, trapsToClear);
-            }
+            fallbackClearLocal(targetDate, trapsToClear);
         };
 
         const fallbackClearLocal = (date, ids) => {
@@ -1421,34 +1601,17 @@
             }, 3500);
         };
 
-        // เมื่อพนักงานสลับดูวันที่บนปฏิทิน
         dateInput.addEventListener('change', () => {
-            if (isFirebaseConnected) {
-                listenToInspectionUpdates();
-            } else {
-                loadLocalInspections();
-            }
+            loadLocalInspections();
             showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
         });
 
-        // โหลดหน้าจอและวาดกรงทันที 63 กรงตั้งแต่เริ่มแรกเปิดหน้าจอ
         window.onload = () => {
-            // 1. สั่งวาดและคำนวณ KPI เริ่มแรกทันที (เพื่อแก้ปัญหาหน้าจอว่างเปล่า)
-            renderInteractiveMap();
-            updateDashboardKPIs();
-            updateAnalyticsChart();
-
-            // 2. เริ่มการเชื่อมต่อกับระบบฐานข้อมูล Firebase (จะสลับออฟไลน์ออโต้เนื่องจาก Config ว่าง)
-            initializeRealtimeDatabase();
+            loadLocalInspections();
             
             document.getElementById('btnSync').addEventListener('click', () => {
-                if (isFirebaseConnected) {
-                    listenToInspectionUpdates();
-                    showToast("ซิงค์เรียบร้อย", "อัปเดตข้อมูลจากเซิร์ฟเวอร์หลักล่าสุด", "emerald");
-                } else {
-                    loadLocalInspections();
-                    showToast("อัปเดตแล้ว (Offline)", "ข้อมูลได้รับการดึงจากหน่วยความจำเรียบร้อย", "emerald");
-                }
+                loadLocalInspections();
+                showToast("อัปเดตแล้ว (Offline Demo)", "ข้อมูลได้รับการดึงจากหน่วยความจำเรียบร้อย", "emerald");
             });
         };
     </script>
