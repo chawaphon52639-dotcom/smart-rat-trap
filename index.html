@@ -57,15 +57,23 @@
 
                 <!-- Date Selector and Quick Action -->
                 <div class="flex items-center space-x-3">
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
-                            <i class="fa-regular fa-calendar-days"></i>
-                        </span>
-                        <input type="date" id="inspectionDate" 
-                               class="bg-slate-900/80 border border-slate-700 text-sm rounded-xl focus:ring-rose-500 focus:border-rose-500 block pl-10 pr-3 py-2 text-slate-100 font-semibold cursor-pointer shadow-inner focus:outline-none transition-all w-40 sm:w-48">
+                    <div class="flex items-center bg-slate-900/80 border border-slate-700 rounded-xl overflow-hidden shadow-inner">
+                        <button type="button" onclick="adjustDate(-1)" class="px-2.5 py-2 hover:bg-slate-750 text-slate-400 hover:text-indigo-400 transition" title="วันก่อนหน้า">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                        </button>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                <i class="fa-regular fa-calendar-days"></i>
+                            </span>
+                            <input type="date" id="inspectionDate" 
+                                   class="bg-transparent text-sm pl-9 pr-1 py-2 text-slate-100 font-semibold cursor-pointer focus:outline-none transition-all w-36 sm:w-40">
+                        </div>
+                        <button type="button" onclick="adjustDate(1)" class="px-2.5 py-2 hover:bg-slate-750 text-slate-400 hover:text-indigo-400 transition" title="วันถัดไป">
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
                     </div>
                     
-                    <button id="btnSync" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-700/50 rounded-xl transition duration-200 text-slate-300 hover:text-emerald-400" title="ซิงค์ข้อมูลใหม่">
+                    <button id="btnSync" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-750 rounded-xl transition duration-200 text-slate-300 hover:text-emerald-400" title="ซิงค์ข้อมูลใหม่">
                         <i class="fa-solid fa-rotate" id="syncIcon"></i>
                     </button>
                 </div>
@@ -562,7 +570,7 @@
         import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // =========================================================================
-        // ⚙️ ตัวแปร Firebase Config จริงของน้าราม (ฝังเข้าโค้ดตรงเรียบร้อยแล้วครับ)
+        // ⚙️ ส่วนแก้ไขรหัส FIREBASE CONFIG:
         // =========================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyBrKnDDKxTAC9LguE1zWlBSTJoQAUXn3yM",
@@ -595,9 +603,22 @@
         const dateInput = document.getElementById('inspectionDate');
         const todayStr = getLocalDateString();
         
-        // กำหนดค่าตั้งต้นเป็นวันปัจจุบันในไทย และล็อกไม่ให้เลือกวันข้างหน้า
+        // กำหนดค่าตั้งต้นเป็นวันปัจจุบันในไทย (เอาข้อจำกัด .max ออก เพื่อให้สลับดูวันล่วงหน้าหรือย้อนหลังได้ตามใจชอบแล้วครับน้า)
         dateInput.value = todayStr;
-        dateInput.max = todayStr; 
+
+        // ฟังก์ชันสำหรับกดปุ่มลูกศร ◀ หรือ ▶ เพื่อเลื่อนเปลี่ยนวันสะดวกรวดเร็ว
+        window.adjustDate = (daysToAdjust) => {
+            const currentDate = new Date(dateInput.value);
+            currentDate.setDate(currentDate.getDate() + daysToAdjust);
+            
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            
+            dateInput.value = `${year}-${month}-${day}`;
+            // สั่งให้ทริกเกอร์อีเวนต์เปลี่ยนวันเพื่อให้หน้ารวมรายงานเริ่มคำนวณใหม่
+            dateInput.dispatchEvent(new Event('change'));
+        };
 
         // Generate Node ID for identify inspectors
         const generateNodeId = () => {
