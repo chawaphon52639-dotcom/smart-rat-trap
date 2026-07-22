@@ -70,7 +70,7 @@
                         <h1 class="text-lg font-bold bg-gradient-to-r from-emerald-200 via-teal-300 to-indigo-300 bg-clip-text text-transparent leading-none">
                             RAT TRAP MONITOR
                         </h1>
-                        <span class="text-xs text-emerald-400 font-bold tracking-wider" id="lblSystemModeStatus">ระบบจริง (ซิงค์ฐานข้อมูลสด)</span>
+                        <span class="text-xs text-emerald-400 font-bold tracking-wider" id="lblSystemModeStatus">🟢 ระบบจริง (ซิงค์ฐานข้อมูลสด)</span>
                     </div>
                 </div>
 
@@ -870,18 +870,22 @@
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // IMPORTANT: Replace this with your actual Firebase project config credentials from Firebase Console
+        // =========================================================================
+        // 🔑 REAL FIREBASE PRODUCTION CONFIGURATION (EMBEDDED)
+        // =========================================================================
         const firebaseConfig = {
-            apiKey: "AIzaSyCxXXXXXX...", // Replace XXXXXX with your real API Key
-            authDomain: "your-project-id.firebaseapp.com",
-            projectId: "your-project-id",
-            storageBucket: "your-project-id.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
+            apiKey: "AIzaSyBrKnDDKxTAC9LguE1zWlBSTJoQAUXn3yM",
+            authDomain: "my-rat-trap.firebaseapp.com",
+            projectId: "my-rat-trap",
+            storageBucket: "my-rat-trap.firebasestorage.app",
+            messagingSenderId: "847693841799",
+            appId: "1:847693841799:web:6d48473e888eea2b7f7f22",
+            measurementId: "G-2XRQZKTEK0"
         };
+        // =========================================================================
 
         const TOTAL_STATIONS = 63;
-        const appId = "real_prod_v1"; 
+        const appId = "my-rat-trap-prod"; 
 
         // NODE ID TRACKING SYSTEM (Captures unique device ID)
         const getOrCreateNodeId = () => {
@@ -903,7 +907,7 @@
             localStorage.setItem(`supervisor_pin_${appId}`, newPin);
         };
 
-        let pendingPinAction = null; // Stores action callback after PIN success
+        let pendingPinAction = null; 
         
         let firebaseApp = null;
         let auth = null;
@@ -1010,7 +1014,7 @@
 
         const getLocalDateString = (d = new Date()) => {
             let year = d.getFullYear();
-            if (year > 2400) year -= 543; // BE to AD
+            if (year > 2400) year -= 543;
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
@@ -1031,7 +1035,6 @@
             showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
         };
 
-        // Photo compression handler (Client-Side Image Compressor < 50KB)
         window.handlePhotoCompress = (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -2047,11 +2050,10 @@
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         isFirebaseConnected = true;
-                        document.getElementById('lblSystemModeStatus').innerText = "ระบบจริง (ซิงค์คลาวด์เรียลไทม์)";
+                        document.getElementById('lblSystemModeStatus').innerText = "🟢 ระบบจริง (ซิงค์คลาวด์เรียลไทม์)";
                         document.getElementById('lblUserNode').innerText = activeNodeId;
                         showToast("เชื่อมต่อคลาวด์เรียลไทม์แล้ว", "ข้อมูลซิงค์ตรงกันทุกอุปกรณ์สดๆ", "emerald");
                         
-                        // Sync Staff config from cloud
                         listenToCloudStaffConfig();
                         loadInspectionsForCurrentDate();
                     }
