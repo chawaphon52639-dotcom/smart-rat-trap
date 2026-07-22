@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rat Trap Monitor - ระบบควบคุมจุดตรวจกรงดักหนู 63 จุด</title>
+    <title>Smart Rat Trap Monitor - [REAL SYSTEM]</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter & Sarabun for Thai compatibility -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for beautiful real-time analytics -->
+    <!-- Chart.js for real-time analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -62,20 +62,20 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Brand Logo & Title -->
                 <div class="flex items-center space-x-3">
-                    <div class="bg-gradient-to-tr from-amber-500 to-rose-500 p-2.5 rounded-xl shadow-lg shadow-rose-500/10 flex items-center justify-center animate-pulse">
+                    <div class="bg-gradient-to-tr from-emerald-500 to-teal-500 p-2.5 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center">
                         <svg class="w-6 h-6 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold bg-gradient-to-r from-amber-200 via-rose-300 to-indigo-300 bg-clip-text text-transparent leading-none">
+                        <h1 class="text-lg font-bold bg-gradient-to-r from-emerald-200 via-teal-300 to-indigo-300 bg-clip-text text-transparent leading-none">
                             RAT TRAP MONITOR
                         </h1>
-                        <span class="text-xs text-slate-400 font-medium tracking-wider">ระบบบริหารจัดการกรงดักหนู 63 จุด</span>
+                        <span class="text-xs text-emerald-400 font-bold tracking-wider" id="lblSystemModeStatus">ระบบจริง (ซิงค์ฐานข้อมูลสด)</span>
                     </div>
                 </div>
 
-                <!-- Date Selector and Executive Dashboard Action -->
+                <!-- Date Selector, Staff Mgmt, PIN & Executive Dashboard Action -->
                 <div class="flex items-center space-x-2 sm:space-x-3">
                     <!-- Executive Summary Dashboard Button -->
                     <button type="button" onclick="openSummaryDashboardModal()" class="px-3 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition duration-200 flex items-center space-x-1.5 border border-indigo-400/30">
@@ -84,6 +84,17 @@
                         <span class="md:hidden">📊 สรุปภาพรวม</span>
                     </button>
 
+                    <!-- Staff Management Button (Protected by Supervisor PIN) -->
+                    <button type="button" onclick="requestSupervisorPin(openStaffModal)" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-750 rounded-xl transition duration-200 text-slate-300 hover:text-indigo-400" title="จัดการรายชื่อพนักงาน (เฉพาะหัวหน้า/PIN)">
+                        <i class="fa-solid fa-users text-xs"></i>
+                    </button>
+
+                    <!-- Change PIN Settings Button -->
+                    <button type="button" onclick="openChangePinModal()" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-750 rounded-xl transition duration-200 text-slate-300 hover:text-amber-400" title="ตั้งค่าเปลี่ยนรหัส PIN ผู้ดูแล">
+                        <i class="fa-solid fa-key text-xs"></i>
+                    </button>
+
+                    <!-- Date Selection Input -->
                     <div class="flex items-center bg-slate-900/80 border border-slate-700 rounded-xl overflow-hidden shadow-inner">
                         <button type="button" onclick="adjustDate(-1)" class="px-2.5 py-2 hover:bg-slate-750 text-slate-400 hover:text-indigo-400 transition" title="วันก่อนหน้า">
                             <i class="fa-solid fa-chevron-left text-xs"></i>
@@ -236,7 +247,7 @@
 
                 <!-- Scrollable Zone layout -->
                 <div class="space-y-6">
-                    <!-- Zone 1 -->
+                    <!-- Zone A -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-indigo-400">
@@ -248,7 +259,7 @@
                         <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneA"></div>
                     </div>
 
-                    <!-- Zone 2 -->
+                    <!-- Zone B -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-pink-400">
@@ -260,7 +271,7 @@
                         <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneB"></div>
                     </div>
 
-                    <!-- Zone 3 -->
+                    <!-- Zone C -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-cyan-400">
@@ -272,7 +283,7 @@
                         <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneC"></div>
                     </div>
 
-                    <!-- Zone 4 -->
+                    <!-- Zone D -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-amber-400">
@@ -304,10 +315,11 @@
                     <div>
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm font-bold text-slate-200">
-                                <i class="fa-solid fa-list-check text-rose-400 mr-2"></i>ประวัติการตรวจบันทึกวันนี้
+                                <i class="fa-solid fa-list-check text-emerald-400 mr-2"></i>ประวัติการตรวจบันทึกวันนี้
                             </h3>
-                            <button onclick="triggerClearAllToday()" class="text-[11px] text-rose-400 hover:text-rose-300 font-semibold hover:underline">
-                                <i class="fa-solid fa-trash-can mr-1"></i>ล้างทั้งหมด
+                            <button onclick="triggerClearAllToday()" class="text-[11px] text-rose-400 hover:text-rose-300 font-semibold hover:underline flex items-center space-x-1">
+                                <i class="fa-solid fa-shield-halved text-xs"></i>
+                                <span>ล้างทั้งหมด (PIN)</span>
                             </button>
                         </div>
                         
@@ -316,7 +328,7 @@
                                 <i class="fa-solid fa-magnifying-glass"></i>
                             </span>
                             <input type="text" id="logSearch" onkeyup="searchInspectionLogs()" placeholder="ค้นหาตามชื่อผู้ตรวจ หรือหมายเลข..." 
-                                   class="bg-slate-900/60 border border-slate-800/80 text-xs rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-9 pr-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none transition-all">
+                                   class="bg-slate-900/60 border border-slate-800/80 text-xs rounded-xl focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-9 pr-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none transition-all">
                         </div>
 
                         <div class="overflow-y-auto max-h-72 space-y-2.5 pr-1" id="timelineLogsContainer">
@@ -328,8 +340,8 @@
                     </div>
 
                     <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-[11px] text-slate-500">
-                        <span>Inspector Mode: Live Peer Active</span>
-                        <span class="font-mono bg-slate-900 px-2 py-0.5 rounded text-indigo-400" id="lblUserNode">User_Node</span>
+                        <span>Status: Cloud Sync Active</span>
+                        <span class="font-mono bg-slate-900 px-2 py-0.5 rounded text-emerald-400" id="lblUserNode">NODE_LIVE</span>
                     </div>
                 </div>
 
@@ -510,16 +522,14 @@
                         </div>
 
                         <!-- Work order items table / card list -->
-                        <div class="space-y-3" id="workOrderContainer">
-                            <!-- JS Auto Generates Work Orders -->
-                        </div>
+                        <div class="space-y-3" id="workOrderContainer"></div>
                     </div>
 
                 </div>
 
                 <!-- Modal Footer -->
                 <div class="bg-slate-900 px-6 py-3 border-t border-slate-800 flex justify-between items-center text-xs no-print">
-                    <span class="text-slate-500">ข้อมูลอัปเดตแบบเรียลไทม์จากระบบเซิร์ฟเวอร์หลัก</span>
+                    <span class="text-slate-500">ระบบประมวลผลอัตโนมัติ สำหรับผู้บริหารและหัวหน้างาน</span>
                     <button type="button" onclick="closeSummaryDashboardModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl transition">
                         ปิดหน้าต่าง
                     </button>
@@ -561,15 +571,11 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
                                 <i class="fa-regular fa-user"></i>
                             </span>
-                            <input type="text" id="formInspector" required list="staffList" placeholder="พิมพ์ชื่อผู้ตรวจสอบ..."
-                                   class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 placeholder-slate-500 text-sm focus:outline-none transition-all">
-                            <datalist id="staffList">
-                                <option value="สมชาย เจริญสุข">
-                                <option value="วรรณิภา มั่นคง">
-                                <option value="อนันต์ ยอดรักษ์">
-                                <option value="ปิยะพงษ์ เลิศวิไล">
-                                <option value="กิตติศักดิ์ ศรีสุข">
-                            </datalist>
+                            <!-- LOCKED DROPDOWN SELECT TO PREVENT MALICIOUS / INCORRECT NAMES -->
+                            <select id="formInspector" required 
+                                    class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 text-sm focus:outline-none transition-all">
+                                <option value="" disabled selected>-- กรุณาเลือกรายชื่อพนักงาน --</option>
+                            </select>
                         </div>
                     </div>
 
@@ -619,6 +625,22 @@
                                   class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full p-3 text-slate-100 placeholder-slate-500 text-sm focus:outline-none transition-all resize-none"></textarea>
                     </div>
 
+                    <!-- OPTIONAL PHOTO ATTACHMENT FIELD -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                            <i class="fa-solid fa-camera text-indigo-400 mr-1"></i>ถ่ายรูปแนบหลักฐาน (ถ้ามี - ไม่บังคับ / บีบอัดไฟล์จิ๋วให้อัตโนมัติ)
+                        </label>
+                        <input type="file" id="formPhotoInput" accept="image/*" capture="environment" onchange="handlePhotoCompress(event)" 
+                               class="text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer w-full bg-slate-900 p-1.5 rounded-xl border border-slate-700">
+                        <input type="hidden" id="formPhotoBase64">
+                        <div id="photoPreviewContainer" class="hidden mt-2 relative w-24 h-24 rounded-xl overflow-hidden border border-slate-700 shadow-md">
+                            <img id="imgPreview" class="w-full h-full object-cover" alt="หลักฐานกรงหนู">
+                            <button type="button" onclick="removePhoto()" class="absolute top-1 right-1 bg-rose-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] shadow">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="pt-2 flex justify-end space-x-3">
                         <button type="button" onclick="closeInspectionModal()" 
                                 class="px-4 py-2.5 bg-slate-900/80 border border-slate-700 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition duration-200">
@@ -630,6 +652,139 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Supervisor PIN Verification -->
+    <div id="modalPin" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closePinModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full border border-slate-700/60 p-6 space-y-4">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-3">
+                        <i class="fa-solid fa-user-shield text-xl"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-100">ยืนยันรหัส PIN ผู้ดูแลระบบ</h3>
+                    <p class="text-xs text-slate-400 mt-1">เฉพาะหัวหน้างาน/ผู้บริหารเท่านั้น <br><span class="text-indigo-400 font-semibold">(รหัสเริ่มต้นมาตรฐาน: 1234)</span></p>
+                </div>
+
+                <div class="space-y-3">
+                    <input type="password" id="pinInput" maxlength="4" placeholder="• • • •" 
+                           class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full py-2.5 text-center text-xl font-bold tracking-widest text-slate-100 focus:outline-none">
+                    <p id="pinErrorMsg" class="text-xs text-rose-400 text-center hidden font-bold">
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i>รหัส PIN ไม่ถูกต้อง
+                    </p>
+                </div>
+
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closePinModal()" 
+                            class="flex-1 px-4 py-2 bg-slate-900 border border-slate-700 hover:bg-slate-750 text-slate-300 text-xs font-bold rounded-xl transition duration-200">
+                        ยกเลิก
+                    </button>
+                    <button type="button" onclick="verifyPinAndExecute()" 
+                            class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-indigo-600/10">
+                        ยืนยันรหัส PIN
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Staff Management (Protected by Supervisor PIN) -->
+    <div id="modalStaff" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeStaffModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-700/60 p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                    <div class="flex items-center space-x-2 text-indigo-400">
+                        <i class="fa-solid fa-users text-lg"></i>
+                        <h3 class="text-base font-bold text-slate-100">จัดการรายชื่อพนักงานเดินตรวจ</h3>
+                    </div>
+                    <button type="button" onclick="closeStaffModal()" class="text-slate-400 hover:text-slate-200">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Add New Staff Input -->
+                <div class="space-y-2">
+                    <label for="newStaffNameInput" class="block text-xs font-bold text-slate-400 uppercase tracking-wider">เพิ่มพนักงานคนใหม่</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="newStaffNameInput" placeholder="กรอกชื่อ-นามสกุล พนักงาน..." 
+                               class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-xs focus:outline-none focus:border-indigo-500 flex-1">
+                        <button type="button" onclick="addNewStaffName()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition shadow">
+                            <i class="fa-solid fa-plus mr-1"></i>เพิ่ม
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Staff List Container -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">รายชื่อพนักงานปัจจุบันในระบบ</label>
+                    <div id="staffListUIContainer" class="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+                        <!-- JS Dynamic Render -->
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button type="button" onclick="closeStaffModal()" class="px-4 py-2 bg-slate-900 border border-slate-700 hover:bg-slate-750 text-slate-300 text-xs font-bold rounded-xl transition">
+                        ปิดหน้าต่าง
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Change Supervisor PIN -->
+    <div id="modalChangePin" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeChangePinModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full border border-slate-700/60 p-6 space-y-4">
+                <div class="text-center">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-3">
+                        <i class="fa-solid fa-key text-xl"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-100">ตั้งค่าเปลี่ยนรหัส PIN ผู้ดูแล</h3>
+                    <p class="text-xs text-slate-400 mt-1">กำหนดรหัส PIN 4 หลักใหม่สำหรับหัวหน้างาน</p>
+                </div>
+
+                <div class="space-y-3">
+                    <div>
+                        <label for="oldPinInput" class="block text-xs font-semibold text-slate-400 mb-1">รหัส PIN ปัจจุบัน (เริ่มต้น: 1234)</label>
+                        <input type="password" id="oldPinInput" maxlength="4" placeholder="• • • •" 
+                               class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-amber-500 focus:border-amber-500 block w-full py-2 text-center text-lg font-bold text-slate-100 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="newPinInput" class="block text-xs font-semibold text-slate-400 mb-1">รหัส PIN ใหม่ (4 หลัก)</label>
+                        <input type="password" id="newPinInput" maxlength="4" placeholder="• • • •" 
+                               class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-amber-500 focus:border-amber-500 block w-full py-2 text-center text-lg font-bold text-slate-100 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="confirmNewPinInput" class="block text-xs font-semibold text-slate-400 mb-1">ยืนยันรหัส PIN ใหม่</label>
+                        <input type="password" id="confirmNewPinInput" maxlength="4" placeholder="• • • •" 
+                               class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-amber-500 focus:border-amber-500 block w-full py-2 text-center text-lg font-bold text-slate-100 focus:outline-none">
+                    </div>
+                    <p id="changePinErrorMsg" class="text-xs text-rose-400 text-center hidden font-bold">
+                        <i class="fa-solid fa-circle-exclamation mr-1"></i>ข้อมูลไม่ถูกต้อง
+                    </p>
+                </div>
+
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="closeChangePinModal()" 
+                            class="flex-1 px-4 py-2 bg-slate-900 border border-slate-700 hover:bg-slate-750 text-slate-300 text-xs font-bold rounded-xl transition duration-200">
+                        ยกเลิก
+                    </button>
+                    <button type="button" onclick="submitChangePin()" 
+                            class="flex-1 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-amber-600/10">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i>บันทึกรหัสใหม่
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -653,8 +808,10 @@
 
                 <div class="space-y-3">
                     <label for="bulkInspector" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ระบุชื่อพนักงานผู้ตรวจเช็ค <span class="text-rose-400">*</span></label>
-                    <input type="text" id="bulkInspector" placeholder="ป้อนชื่อผู้ดูแล..." required
-                           class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full px-3 py-2.5 text-slate-100 text-sm focus:outline-none">
+                    <select id="bulkInspector" required 
+                            class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full px-3 py-2.5 text-slate-100 text-sm focus:outline-none">
+                        <option value="" disabled selected>-- กรุณาเลือกรายชื่อพนักงาน --</option>
+                    </select>
                 </div>
 
                 <div class="flex space-x-3 pt-2">
@@ -695,60 +852,175 @@
                     </button>
                     <button type="button" onclick="executeClearAllToday()" 
                             class="flex-1 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-rose-600/10">
-                        <i class="fa-solid fa-trash-can mr-1"></i>ลบทั้งหมด
+                        <i class="fa-solid fa-trash-can mr-1"></i>ยืนยันล้างข้อมูล
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Alert / Custom Message Pop-up Toast -->
-    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none">
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl p-4 flex items-center space-x-3 max-w-sm">
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-emerald-400 bg-emerald-500/10" id="toastIconContainer">
+    <!-- Alert Toast Notification Component -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-800 border border-slate-700 text-slate-100 px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 max-w-sm">
+            <div id="toastIconContainer" class="w-8 h-8 rounded-full flex items-center justify-center text-emerald-400 bg-emerald-500/10">
                 <i class="fa-solid fa-circle-check" id="toastIcon"></i>
             </div>
             <div>
-                <p class="text-xs font-semibold text-slate-200" id="toastTitle">สำเร็จ</p>
-                <p class="text-[10px] text-slate-400 mt-0.5" id="toastMessage">อัปเดตข้อมูลสำเร็จ</p>
+                <h4 class="text-xs font-bold" id="toastTitle">การดำเนินการสำเร็จ</h4>
+                <p class="text-[11px] text-slate-400 mt-0.5" id="toastMessage">บันทึกข้อมูลเรียบร้อยแล้ว</p>
             </div>
         </div>
     </div>
 
-    <!-- Firebase JS SDK -->
+    <!-- Firebase Web SDK Modular import & Application Core Logic -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // =========================================================================
-        // ⚙️ FIREBASE CONFIG:
-        // =========================================================================
+        // Firebase Configuration (Replace with actual Firebase Credentials)
         const firebaseConfig = {
-            apiKey: "AIzaSyBrKnDDKxTAC9LguE1zWlBSTJoQAUXn3yM",
-            authDomain: "my-rat-trap.firebaseapp.com",
-            projectId: "my-rat-trap",
-            storageBucket: "my-rat-trap.firebasestorage.app",
-            messagingSenderId: "847693841799",
-            appId: "1:847693841799:web:6d48473e888eea2b7f7f22",
-            measurementId: "G-2XRQZKTEK0"
+            apiKey: "AIzaSyCxXXXXXX...",
+            authDomain: "your-project-id.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-project-id.appspot.com",
+            messagingSenderId: "1234567890",
+            appId: "1:1234567890:web:abcdef123456"
         };
 
         const TOTAL_STATIONS = 63;
-        let firebaseApp, db, auth;
-        let activeUser = null;
+        const appId = "real_prod_v1"; 
+
+        // NODE ID TRACKING SYSTEM (Captures unique device ID)
+        const getOrCreateNodeId = () => {
+            let nodeId = localStorage.getItem(`device_node_id_${appId}`);
+            if (!nodeId) {
+                nodeId = 'NODE_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                localStorage.setItem(`device_node_id_${appId}`, nodeId);
+            }
+            return nodeId;
+        };
+
+        const activeNodeId = getOrCreateNodeId();
+
+        const getSupervisorPin = () => {
+            return localStorage.getItem(`supervisor_pin_${appId}`) || "1234";
+        };
+
+        const setSupervisorPin = (newPin) => {
+            localStorage.setItem(`supervisor_pin_${appId}`, newPin);
+        };
+
+        let pendingPinAction = null; // Stores action callback after PIN success
+        
+        let firebaseApp = null;
+        let auth = null;
+        let db = null;
+        let isFirebaseConnected = false;
+        let unsubscribeRealtime = null;
+        let unsubscribeStaffSync = null;
+
         let activeRecords = {}; 
         let allTimeStoredRecords = []; 
         let currentFilter = 'ALL'; 
         let chartInstance = null; 
-        let isFirebaseConnected = false;
         let activeSummaryRange = 'LAST_7';
         let currentMaintenanceWorkOrdersText = "";
 
-        // Date helper (A.D. Safe & Thai BE auto-fix)
+        // Dynamic Staff List State (Default sample names for initial boot)
+        const DEFAULT_STAFF = ["สมชาย เจริญสุข", "วรรณิภา มั่นคง", "อนันต์ ยอดรักษ์", "ปิยะพงษ์ เลิศวิไล", "กิตติศักดิ์ ศรีสุข"];
+        let staffList = JSON.parse(localStorage.getItem(`staff_list_${appId}`)) || DEFAULT_STAFF;
+
+        const saveAndSyncStaffList = async () => {
+            localStorage.setItem(`staff_list_${appId}`, JSON.stringify(staffList));
+            renderStaffDropdowns();
+            renderStaffListUI();
+
+            if (isFirebaseConnected && db) {
+                try {
+                    await setDoc(doc(db, 'rat_settings', 'staff_config'), { list: staffList, updatedAt: new Date().toISOString() });
+                } catch (err) {
+                    console.warn("Could not sync staff list to cloud:", err);
+                }
+            }
+        };
+
+        const renderStaffDropdowns = () => {
+            const selects = [document.getElementById('formInspector'), document.getElementById('bulkInspector')];
+            selects.forEach(select => {
+                if (!select) return;
+                const currentVal = select.value;
+                select.innerHTML = '<option value="" disabled selected>-- กรุณาเลือกรายชื่อพนักงาน --</option>';
+                staffList.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    select.appendChild(opt);
+                });
+                if (currentVal && staffList.includes(currentVal)) {
+                    select.value = currentVal;
+                }
+            });
+        };
+
+        window.openStaffModal = () => {
+            renderStaffListUI();
+            document.getElementById('modalStaff').classList.remove('hidden');
+        };
+
+        window.closeStaffModal = () => {
+            document.getElementById('modalStaff').classList.add('hidden');
+        };
+
+        window.addNewStaffName = () => {
+            const input = document.getElementById('newStaffNameInput');
+            const name = input.value.trim();
+            if (!name) {
+                showToast("กรอกชื่อพนักงาน", "กรุณาระบุชื่อพนักงานที่ต้องการเพิ่ม", "amber");
+                return;
+            }
+            if (staffList.includes(name)) {
+                showToast("ชื่อซ้ำในระบบ", "มีชื่อพนักงานคนนี้อยู่ในระบบแล้ว", "amber");
+                return;
+            }
+            staffList.push(name);
+            input.value = "";
+            saveAndSyncStaffList();
+            showToast("เพิ่มพนักงานสำเร็จ", `เพิ่มคุณ ${name} เข้าสู่ระบบเรียบร้อยแล้ว`, "emerald");
+        };
+
+        window.removeStaffName = (index) => {
+            if (staffList.length <= 1) {
+                showToast("ไม่สามารถลบได้", "ต้องมีรายชื่อพนักงานอย่างน้อย 1 คนในระบบ", "amber");
+                return;
+            }
+            const removedName = staffList[index];
+            staffList.splice(index, 1);
+            saveAndSyncStaffList();
+            showToast("ลบพนักงานสำเร็จ", `ลบคุณ ${removedName} ออกจากระบบแล้ว`, "amber");
+        };
+
+        const renderStaffListUI = () => {
+            const container = document.getElementById('staffListUIContainer');
+            if (!container) return;
+            if (staffList.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 italic py-2">ไม่มีรายชื่อพนักงานในระบบ</p>';
+                return;
+            }
+            container.innerHTML = staffList.map((name, idx) => `
+                <div class="flex justify-between items-center bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs">
+                    <span class="text-slate-200 font-semibold"><i class="fa-regular fa-user mr-2 text-indigo-400"></i>${name}</span>
+                    <button type="button" onclick="removeStaffName(${idx})" class="text-slate-500 hover:text-rose-400 transition px-2 py-1" title="ลบรายชื่อ">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `).join('');
+        };
+
+        // Date Handling (Buddhist Era BE to Gregorian AD normalizer)
         const getLocalDateString = (d = new Date()) => {
             let year = d.getFullYear();
-            if (year > 2400) year = year - 543;
+            if (year > 2400) year -= 543; // BE to AD
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
@@ -757,167 +1029,125 @@
         const dateInput = document.getElementById('inspectionDate');
         dateInput.value = getLocalDateString();
 
-        window.adjustDate = (daysToAdjust) => {
-            if (!dateInput.value) return;
-            const parts = dateInput.value.split('-');
-            let year = parseInt(parts[0]);
-            if (year > 2400) year = year - 543;
-            
-            const month = parseInt(parts[1]);
-            const day = parseInt(parts[2]);
-            
-            const currentDate = new Date(year, month - 1, day);
-            currentDate.setDate(currentDate.getDate() + daysToAdjust);
-            
-            let newYear = currentDate.getFullYear();
-            if (newYear > 2400) newYear = newYear - 543;
-            
-            const newMonth = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const newDay = String(currentDate.getDate()).padStart(2, '0');
-            
-            dateInput.value = `${newYear}-${newMonth}-${newDay}`;
-            dateInput.dispatchEvent(new Event('change'));
+        window.adjustDate = (days) => {
+            const currentVal = dateInput.value;
+            const parts = currentVal.split('-');
+            let yr = parseInt(parts[0]);
+            if (yr > 2400) yr -= 543;
+            const d = new Date(yr, parseInt(parts[1]) - 1, parseInt(parts[2]));
+            d.setDate(d.getDate() + days);
+            dateInput.value = getLocalDateString(d);
+            loadInspectionsForCurrentDate();
+            showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
         };
 
-        const generateNodeId = () => {
-            let nid = localStorage.getItem('inspection_node_id');
-            if(!nid) {
-                nid = 'NODE_' + Math.random().toString(36).substring(2, 8).toUpperCase();
-                localStorage.setItem('inspection_node_id', nid);
-            }
-            return nid;
-        };
-        const activeNodeId = generateNodeId();
-        document.getElementById('lblUserNode').innerText = activeNodeId;
+        // Photo compression handler (Client-Side Image Compressor < 50KB)
+        window.handlePhotoCompress = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
 
-        const appId = 'smart-rat-trap-monitor';
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 500;
+                    let width = img.width;
+                    let height = img.height;
 
-        const initializeRealtimeDatabase = async () => {
-            try {
-                if (firebaseConfig && firebaseConfig.apiKey) {
-                    firebaseApp = initializeApp(firebaseConfig);
-                    auth = getAuth(firebaseApp);
-                    db = getFirestore(firebaseApp);
-
-                    await signInAnonymously(auth);
-
-                    onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            activeUser = user;
-                            isFirebaseConnected = true;
-                            showToast("เชื่อมต่อคลาวด์แล้ว", "ข้อมูลทำการซิงค์แบบสดเรียลไทม์", "emerald");
-                            listenToInspectionUpdates();
-                        }
-                    });
-                } else {
-                    useMockLocalDatabase();
-                }
-            } catch (err) {
-                console.warn("Firestore init failed. Local fallback:", err);
-                useMockLocalDatabase();
-            }
-        };
-
-        const useMockLocalDatabase = () => {
-            isFirebaseConnected = false;
-            showToast("ใช้งานโหมดออฟไลน์", "ข้อมูลถูกจัดเก็บไว้บนอุปกรณ์จำลอง", "amber");
-            loadLocalInspections();
-        };
-
-        const getFirebaseCollectionRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'inspections');
-        const getFirebaseDocRef = (docId) => doc(db, 'artifacts', appId, 'public', 'data', 'inspections', docId);
-
-        let firebaseUnsubscriber = null;
-        const listenToInspectionUpdates = () => {
-            if (!isFirebaseConnected || !db || !auth.currentUser) return; 
-            
-            if (firebaseUnsubscriber) firebaseUnsubscriber();
-
-            const targetDate = dateInput.value;
-            const queryRef = getFirebaseCollectionRef();
-
-            document.getElementById('syncIcon').classList.add('fa-spin');
-
-            firebaseUnsubscriber = onSnapshot(queryRef, (snapshot) => {
-                activeRecords = {};
-                allTimeStoredRecords = [];
-
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    allTimeStoredRecords.push(data);
-                    if (data.date === targetDate) {
-                        activeRecords[data.trapId] = data;
+                    if (width > MAX_WIDTH) {
+                        height = Math.round((height * MAX_WIDTH) / width);
+                        width = MAX_WIDTH;
                     }
-                });
-                
-                renderInteractiveMap();
-                updateDashboardKPIs();
-                updateLogTimeline();
-                updateAnalyticsChart();
-                
-                document.getElementById('syncIcon').classList.remove('fa-spin');
-            }, (error) => {
-                console.error("Firestore listening failed: ", error);
-                document.getElementById('syncIcon').classList.remove('fa-spin');
-                useMockLocalDatabase(); 
-            });
-        };
 
-        const loadLocalInspections = () => {
-            const stored = localStorage.getItem(`rat_inspections_${appId}`);
-            const allRecordsObj = stored ? JSON.parse(stored) : getSampleInitialRecords();
-            
-            const targetDate = dateInput.value;
-            activeRecords = {};
-            allTimeStoredRecords = Object.values(allRecordsObj);
-            
-            allTimeStoredRecords.forEach(rec => {
-                if(rec.date === targetDate) {
-                    activeRecords[rec.trapId] = rec;
-                }
-            });
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
 
-            renderInteractiveMap();
-            updateDashboardKPIs();
-            updateLogTimeline();
-            updateAnalyticsChart();
-        };
-
-        const getSampleInitialRecords = () => {
-            const initial = {};
-            const sampleInspectors = ["สมชาย เจริญสุข", "วรรณิภา มั่นคง", "อนันต์ ยอดรักษ์"];
-            const selectedDate = dateInput.value;
-            
-            const sampleActiveTraps = [3, 12, 22, 33, 45, 58];
-            sampleActiveTraps.forEach((trapId) => {
-                let status = "SAFE";
-                let count = 0;
-                let notes = "";
-                
-                if (trapId === 12 || trapId === 33) {
-                    status = "CAUGHT";
-                    count = 1;
-                    notes = "พบหนูตัวขนาดใหญ่ ติดกรงสปริง";
-                } else if (trapId === 45) {
-                    status = "ISSUE";
-                    notes = "เหยื่อล่อโดนน้ำเปื่อยหมดกรง เปลี่ยนใหม่ด่วน";
-                }
-
-                initial[`${selectedDate}_${trapId}`] = {
-                    id: `${selectedDate}_${trapId}`,
-                    trapId: trapId.toString(),
-                    zone: getZoneByTrapId(trapId),
-                    status: status,
-                    ratsCount: count,
-                    inspector: sampleInspectors[Math.floor(Math.random() * sampleInspectors.length)],
-                    timestamp: new Date().toISOString(),
-                    notes: notes,
-                    date: selectedDate,
-                    nodeId: 'DEMO_NODE'
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
+                    document.getElementById('formPhotoBase64').value = compressedBase64;
+                    document.getElementById('imgPreview').src = compressedBase64;
+                    document.getElementById('photoPreviewContainer').classList.remove('hidden');
                 };
-            });
-            
-            return initial;
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.removePhoto = () => {
+            document.getElementById('formPhotoInput').value = '';
+            document.getElementById('formPhotoBase64').value = '';
+            document.getElementById('photoPreviewContainer').classList.add('hidden');
+        };
+
+        // Supervisor PIN Verification Logic
+        window.requestSupervisorPin = (actionCallback) => {
+            pendingPinAction = actionCallback;
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinErrorMsg').classList.add('hidden');
+            document.getElementById('modalPin').classList.remove('hidden');
+            setTimeout(() => document.getElementById('pinInput').focus(), 200);
+        };
+
+        window.closePinModal = () => {
+            document.getElementById('modalPin').classList.add('hidden');
+        };
+
+        window.verifyPinAndExecute = () => {
+            const inputPin = document.getElementById('pinInput').value.trim();
+            if (inputPin === getSupervisorPin()) {
+                const actionToRun = pendingPinAction;
+                pendingPinAction = null;
+                closePinModal();
+                if (typeof actionToRun === 'function') {
+                    actionToRun();
+                }
+            } else {
+                document.getElementById('pinErrorMsg').classList.remove('hidden');
+            }
+        };
+
+        // Dynamic Change PIN Modal Logic
+        window.openChangePinModal = () => {
+            document.getElementById('oldPinInput').value = '';
+            document.getElementById('newPinInput').value = '';
+            document.getElementById('confirmNewPinInput').value = '';
+            document.getElementById('changePinErrorMsg').classList.add('hidden');
+            document.getElementById('modalChangePin').classList.remove('hidden');
+        };
+
+        window.closeChangePinModal = () => {
+            document.getElementById('modalChangePin').classList.add('hidden');
+        };
+
+        window.submitChangePin = () => {
+            const oldPin = document.getElementById('oldPinInput').value.trim();
+            const newPin = document.getElementById('newPinInput').value.trim();
+            const confirmPin = document.getElementById('confirmNewPinInput').value.trim();
+            const errorMsg = document.getElementById('changePinErrorMsg');
+
+            if (oldPin !== getSupervisorPin()) {
+                errorMsg.innerText = "รหัส PIN ปัจจุบันไม่ถูกต้อง";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            if (newPin.length !== 4 || isNaN(newPin)) {
+                errorMsg.innerText = "รหัส PIN ใหม่ต้องเป็นตัวเลข 4 หลัก";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            if (newPin !== confirmPin) {
+                errorMsg.innerText = "รหัส PIN ใหม่และยืนยันรหัสไม่ตรงกัน";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            setSupervisorPin(newPin);
+            closeChangePinModal();
+            showToast("เปลี่ยนรหัส PIN สำเร็จ", `บันทึกรหัส PIN ผู้ดูแลใหม่เรียบร้อยแล้ว`, "emerald");
         };
 
         const getZoneByTrapId = (id) => {
@@ -1110,7 +1340,8 @@
                                     <span class="text-xs font-bold text-slate-100">กรง #${log.trapId.padStart(2, '0')}</span>
                                     <span class="text-[10px] text-slate-500">${getZoneLabel(log.zone)}</span>
                                 </div>
-                                <p class="text-[11px] text-slate-300 mt-0.5">ผู้ตรวจ: ${log.inspector}</p>
+                                <p class="text-[11px] text-slate-300 mt-0.5">ผู้ตรวจ: ${log.inspector} <span class="text-[9px] text-slate-500 font-mono ml-1">(${log.nodeId || 'N/A'})</span></p>
+                                ${log.photo ? `<div class="mt-1.5"><img src="${log.photo}" class="w-16 h-16 object-cover rounded-lg border border-slate-700 shadow" alt="หลักฐาน"></div>` : ''}
                                 ${log.notes ? `<p class="text-[10px] text-slate-400 bg-slate-900/60 p-1.5 rounded-lg border border-slate-800 mt-1.5 max-w-xs italic">"${log.notes}"</p>` : ''}
                             </div>
                         </div>
@@ -1118,7 +1349,7 @@
                             <span class="text-[10px] text-slate-500 font-medium">${displayTime} น.</span>
                             <div class="flex items-center space-x-1.5">
                                 ${statusLabel}
-                                <button onclick="deleteInspectionReport('${log.trapId}')" class="text-slate-500 hover:text-rose-400 transition" title="ลบข้อมูล">
+                                <button onclick="deleteInspectionReport('${log.trapId}')" class="text-slate-500 hover:text-rose-400 transition" title="ลบข้อมูล (ต้องใช้รหัส PIN)">
                                     <i class="fa-regular fa-trash-can text-xs"></i>
                                 </button>
                             </div>
@@ -1129,349 +1360,93 @@
             });
         };
 
-        const updateAnalyticsChart = () => {
-            const ctx = document.getElementById('chartStatusBreakdown').getContext('2d');
-            
-            const logs = Object.values(activeRecords);
-            const totalSafe = logs.filter(r => r.status === 'SAFE').length;
-            const totalCaught = logs.filter(r => r.status === 'CAUGHT').length;
-            const totalIssues = logs.filter(r => r.status === 'ISSUE').length;
-            const totalUnchecked = TOTAL_STATIONS - logs.length;
+        const renderChart = () => {
+            const ctx = document.getElementById('chartStatusBreakdown');
+            if (!ctx) return;
 
-            const chartData = {
-                labels: ['ยังไม่ได้ตรวจ', 'ปกติ/ปลอดภัย', 'ตรวจพบหนู', 'พบปัญหา/ชำรุด'],
-                datasets: [{
-                    data: [totalUnchecked, totalSafe, totalCaught, totalIssues],
-                    backgroundColor: ['#475569', '#10b981', '#f43f5e', '#f59e0b'],
-                    borderWidth: 2,
-                    borderColor: '#1e293b',
-                    hoverOffset: 4
-                }]
-            };
+            const inspectedList = Object.values(activeRecords);
+            const safe = inspectedList.filter(r => r.status === 'SAFE').length;
+            const caught = inspectedList.filter(r => r.status === 'CAUGHT').length;
+            const issue = inspectedList.filter(r => r.status === 'ISSUE').length;
+            const unchecked = TOTAL_STATIONS - inspectedList.length;
 
             if (chartInstance) {
-                chartInstance.data = chartData;
+                chartInstance.data.datasets[0].data = [safe, caught, issue, unchecked];
                 chartInstance.update();
-            } else {
-                chartInstance = new Chart(ctx, {
-                    type: 'doughnut',
-                    data: chartData,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { color: '#94a3b8', font: { size: 11, family: 'Sarabun' }, padding: 10 }
-                            }
-                        },
-                        cutout: '70%'
-                    }
-                });
-            }
-        };
-
-        // 📊 AUTOMATED EXECUTIVE SUMMARY & WORK ORDER GENERATOR FUNCTIONS
-        window.openSummaryDashboardModal = () => {
-            renderSummaryDashboard(activeSummaryRange);
-            document.getElementById('modalSummaryDashboard').classList.remove('hidden');
-        };
-
-        window.closeSummaryDashboardModal = () => {
-            document.getElementById('modalSummaryDashboard').classList.add('hidden');
-        };
-
-        window.switchSummaryTab = (tabName) => {
-            const analyticsTab = document.getElementById('tabContent-ANALYTICS');
-            const workOrderTab = document.getElementById('tabContent-WORK_ORDER');
-            const btnAnalytics = document.getElementById('tabBtn-ANALYTICS');
-            const btnWorkOrder = document.getElementById('tabBtn-WORK_ORDER');
-
-            if (tabName === 'ANALYTICS') {
-                analyticsTab.classList.remove('hidden');
-                workOrderTab.classList.add('hidden');
-                btnAnalytics.className = "px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white transition";
-                btnWorkOrder.className = "px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 transition";
-            } else {
-                analyticsTab.classList.add('hidden');
-                workOrderTab.classList.remove('hidden');
-                btnAnalytics.className = "px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 transition";
-                btnWorkOrder.className = "px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white transition";
-            }
-        };
-
-        window.changeSummaryRange = (rangeType) => {
-            activeSummaryRange = rangeType;
-            const rangeButtons = ['LAST_7', 'LAST_30', 'THIS_MONTH', 'ALL_TIME'];
-            rangeButtons.forEach((type) => {
-                const btn = document.getElementById(`btnRange-${type}`);
-                if (!btn) return;
-                btn.className = (type === rangeType) 
-                    ? "px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white transition"
-                    : "px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700";
-            });
-            renderSummaryDashboard(rangeType);
-        };
-
-        const renderSummaryDashboard = (rangeType) => {
-            const today = new Date();
-            let filteredRecords = [];
-
-            if (rangeType === 'LAST_7') {
-                const cutoff = new Date();
-                cutoff.setDate(today.getDate() - 7);
-                filteredRecords = allTimeStoredRecords.filter(r => new Date(r.date) >= cutoff);
-            } else if (rangeType === 'LAST_30') {
-                const cutoff = new Date();
-                cutoff.setDate(today.getDate() - 30);
-                filteredRecords = allTimeStoredRecords.filter(r => new Date(r.date) >= cutoff);
-            } else if (rangeType === 'THIS_MONTH') {
-                const currentMonthStr = getLocalDateString().substring(0, 7);
-                filteredRecords = allTimeStoredRecords.filter(r => r.date && r.date.startsWith(currentMonthStr));
-            } else {
-                filteredRecords = [...allTimeStoredRecords];
-            }
-
-            // 1. Calculate Aggregates
-            const totalRats = filteredRecords.reduce((sum, r) => sum + (parseInt(r.ratsCount) || 0), 0);
-            const totalInspections = filteredRecords.length;
-            const totalIssues = filteredRecords.filter(r => r.status === 'ISSUE').length;
-
-            document.getElementById('summaryTotalRats').innerText = totalRats;
-            document.getElementById('summaryTotalInspections').innerText = totalInspections;
-            document.getElementById('summaryTotalIssues').innerText = totalIssues;
-
-            // 2. Zone Breakdown
-            const zoneRatsMap = { 'A': 0, 'B': 0, 'C': 0, 'D': 0 };
-            filteredRecords.forEach(r => {
-                if (zoneRatsMap[r.zone] !== undefined) {
-                    zoneRatsMap[r.zone] += (parseInt(r.ratsCount) || 0);
-                }
-            });
-
-            let topZone = '-';
-            let maxZoneRats = -1;
-            Object.keys(zoneRatsMap).forEach(z => {
-                if (zoneRatsMap[z] > maxZoneRats && zoneRatsMap[z] > 0) {
-                    maxZoneRats = zoneRatsMap[z];
-                    topZone = `Zone ${z}`;
-                }
-            });
-
-            document.getElementById('summaryHotspotZone').innerText = topZone;
-            document.getElementById('summaryHotspotZoneCount').innerText = maxZoneRats > 0 ? `ติดหนูไปทั้งหมด ${maxZoneRats} ตัว` : 'ไม่มีประวัติพบหนูในโซน';
-
-            // 3. AUTOMATED QA INSIGHTS & RECOMMENDATIONS GENERATOR
-            const recommendationsContainer = document.getElementById('summaryAutoRecommendations');
-            let recommendationsHTML = "";
-
-            if (totalRats === 0 && totalIssues === 0) {
-                recommendationsHTML = `<p class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1.5"></i>ไม่พบหนูและกรงชำรุดในระยะเวลานี้: มาตรการควบคุมศัตรูพืชอยู่ในระดับดีเยี่ยม ไม่พบจุดเสี่ยงผิดปกติ</p>`;
-            } else {
-                recommendationsHTML += `<p>• <strong class="text-rose-400">จุดเสี่ยงสูงสุด (Hotspot Area):</strong> พื้นที่ <strong>${getZoneLabel(topZone.replace('Zone ', ''))}</strong> พบการติดหนูมากที่สุดจำนวน <strong>${maxZoneRats} ตัว</strong> แนะนำให้ผู้รับเหมากำจัดศัตรูพืช (Pest Control Contractor) เพิ่มปริมาณเหยื่อล่อ หรือตั้งกรงดักเพิ่มเติมในบริเวณนี้</p>`;
-                if (totalIssues > 0) {
-                    recommendationsHTML += `<p class="mt-1.5">• <strong class="text-amber-400">งานซ่อมบำรุงด่วน (Maintenance Action):</strong> ตรวจพบกรงอยู่ในสถานะชำรุดหรือเหยื่อหมดจำนวน <strong>${totalIssues} รายการ</strong> ได้ทำการออกใบสั่งงานช่าง (Auto Work Order) เรียบร้อยแล้ว เพื่อป้องกันประสิทธิภาพการดักหนูลดลง</p>`;
-                }
-                recommendationsHTML += `<p class="mt-1.5 text-slate-400">• <strong class="text-slate-200">ข้อเสนอแนะฝ่าย QA:</strong> แนะนำให้ตรวจสอบรอยรั่ว ซอกประตู และแนวกำแพงอาคารบริเวณรอบ ${topZone} เพื่อสกัดกั้นช่องทางเข้ามาจากภายนอกอาคาร</p>`;
-            }
-            recommendationsContainer.innerHTML = recommendationsHTML;
-
-            // 4. Render Zone Progress Bars
-            const zoneBreakdownContainer = document.getElementById('summaryZoneBreakdownList');
-            zoneBreakdownContainer.innerHTML = '';
-            ['A', 'B', 'C', 'D'].forEach(zCode => {
-                const ratsInZone = zoneRatsMap[zCode];
-                const percent = totalRats > 0 ? Math.round((ratsInZone / totalRats) * 100) : 0;
-                const zoneHTML = `
-                    <div class="space-y-1">
-                        <div class="flex justify-between items-center text-xs">
-                            <span class="font-bold text-slate-300">${getZoneLabel(zCode)}</span>
-                            <span class="text-rose-400 font-bold">${ratsInZone} ตัว <span class="text-slate-500 text-[10px]">(${percent}%)</span></span>
-                        </div>
-                        <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
-                            <div class="bg-gradient-to-r from-rose-500 to-amber-500 h-2 rounded-full transition-all duration-300" style="width: ${percent}%"></div>
-                        </div>
-                    </div>
-                `;
-                zoneBreakdownContainer.insertAdjacentHTML('beforeend', zoneHTML);
-            });
-
-            // 5. Top 5 Hotspot Traps
-            const trapCatchMap = {};
-            filteredRecords.forEach(r => {
-                if (r.status === 'CAUGHT') {
-                    const tid = r.trapId;
-                    if (!trapCatchMap[tid]) trapCatchMap[tid] = { trapId: tid, zone: r.zone, count: 0 };
-                    trapCatchMap[tid].count += (parseInt(r.ratsCount) || 1);
-                }
-            });
-
-            const sortedTraps = Object.values(trapCatchMap).sort((a, b) => b.count - a.count).slice(0, 5);
-            const hotspotContainer = document.getElementById('summaryHotspotTrapsList');
-            hotspotContainer.innerHTML = '';
-
-            if (sortedTraps.length === 0) {
-                hotspotContainer.innerHTML = `<div class="text-center py-4 text-slate-500 text-xs">ไม่พบประวัติกรงติดหนูในช่วงเวลานี้</div>`;
-            } else {
-                sortedTraps.forEach((item, idx) => {
-                    const trapHTML = `
-                        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800 text-xs">
-                            <div class="flex items-center space-x-2.5">
-                                <span class="w-5 h-5 rounded-lg bg-rose-500/20 text-rose-400 font-bold text-[10px] flex items-center justify-center">${idx + 1}</span>
-                                <div>
-                                    <span class="font-bold text-slate-200">กรง #${item.trapId.padStart(2, '0')}</span>
-                                    <span class="text-[10px] text-slate-500 ml-1.5">${getZoneLabel(item.zone)}</span>
-                                </div>
-                            </div>
-                            <span class="font-extrabold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-md text-xs">พบ ${item.count} ตัว</span>
-                        </div>
-                    `;
-                    hotspotContainer.insertAdjacentHTML('beforeend', trapHTML);
-                });
-            }
-
-            // 6. Daily Table
-            const dailyGroupMap = {};
-            filteredRecords.forEach(r => {
-                if (!r.date) return;
-                if (!dailyGroupMap[r.date]) {
-                    dailyGroupMap[r.date] = { date: r.date, total: 0, safe: 0, caught: 0, issues: 0 };
-                }
-                dailyGroupMap[r.date].total += 1;
-                if (r.status === 'SAFE') dailyGroupMap[r.date].safe += 1;
-                if (r.status === 'CAUGHT') dailyGroupMap[r.date].caught += (parseInt(r.ratsCount) || 1);
-                if (r.status === 'ISSUE') dailyGroupMap[r.date].issues += 1;
-            });
-
-            const sortedDates = Object.keys(dailyGroupMap).sort((a, b) => new Date(b) - new Date(a));
-            const tableBody = document.getElementById('summaryDailyTableBody');
-            tableBody.innerHTML = '';
-
-            if (sortedDates.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-slate-500">ไม่มีข้อมูลย้อนหลังในช่วงเวลานี้</td></tr>`;
-            } else {
-                sortedDates.forEach(dStr => {
-                    const stat = dailyGroupMap[dStr];
-                    const rowHTML = `
-                        <tr class="hover:bg-slate-800/60 transition">
-                            <td class="py-2.5 px-3 font-semibold text-slate-200">${dStr}</td>
-                            <td class="py-2.5 px-3 text-slate-400">${stat.total} จุด</td>
-                            <td class="py-2.5 px-3 text-emerald-400 font-medium">${stat.safe} จุด</td>
-                            <td class="py-2.5 px-3 text-rose-400 font-bold">${stat.caught} ตัว</td>
-                            <td class="py-2.5 px-3 text-amber-400 font-medium">${stat.issues} จุด</td>
-                        </tr>
-                    `;
-                    tableBody.insertAdjacentHTML('beforeend', rowHTML);
-                });
-            }
-
-            // 7. AUTOMATED MAINTENANCE WORK ORDER GENERATOR
-            renderAutomatedMaintenanceWorkOrders(filteredRecords);
-        };
-
-        const renderAutomatedMaintenanceWorkOrders = (recordsList) => {
-            const workOrderContainer = document.getElementById('workOrderContainer');
-            const issueRecords = recordsList.filter(r => r.status === 'ISSUE');
-            workOrderContainer.innerHTML = '';
-
-            if (issueRecords.length === 0) {
-                workOrderContainer.innerHTML = `
-                    <div class="text-center py-10 text-slate-500 bg-slate-900/40 rounded-2xl border border-slate-800">
-                        <i class="fa-solid fa-circle-check text-emerald-500 text-3xl mb-2 block"></i>
-                        <p class="text-xs font-bold text-slate-300">ไม่มีรายการกรงชำรุด หรือเหยื่อหมดในช่วงเวลานี้</p>
-                        <p class="text-[10px] text-slate-500 mt-1">กรงดักหนูทั้ง 63 จุดพร้อมใช้งาน 100%</p>
-                    </div>
-                `;
-                currentMaintenanceWorkOrdersText = "ไม่มีรายการกรงชำรุดในขณะนี้";
                 return;
             }
 
-            let lineTextMsg = `🛠️ [ใบสั่งงานซ่อมบำรุงกรงดักหนูด่วน]\nวันที่สแกน: ${dateInput.value}\n------------------------\n`;
-
-            issueRecords.forEach((item, index) => {
-                const noteTxt = item.notes ? item.notes : "ไม่ระบุรายละเอียดเพิ่มเติม";
-                const timeTxt = item.timestamp ? new Date(item.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) : '-';
-
-                lineTextMsg += `${index + 1}. กรง #${item.trapId.padStart(2, '0')} (${getZoneLabel(item.zone)})\n   หมายเหตุ: ${noteTxt}\n   ผู้แจ้ง: ${item.inspector}\n\n`;
-
-                const cardHTML = `
-                    <div class="p-3.5 bg-slate-900/60 border border-amber-500/30 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                                #${item.trapId.padStart(2, '0')}
-                            </div>
-                            <div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-xs font-bold text-slate-100">กรงหมายเลข #${item.trapId.padStart(2, '0')}</span>
-                                    <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full">${getZoneLabel(item.zone)}</span>
-                                </div>
-                                <p class="text-xs text-amber-300 font-medium mt-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i>อาการ/หมายเหตุ: "${noteTxt}"</p>
-                                <p class="text-[10px] text-slate-500 mt-1">ผู้ลงบันทึก: ${item.inspector} (${item.date} เวลา ${timeTxt} น.)</p>
-                            </div>
-                        </div>
-                        <span class="self-end sm:self-center px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold rounded-lg shrink-0">
-                            รอช่างเข้าซ่อม
-                        </span>
-                    </div>
-                `;
-                workOrderContainer.insertAdjacentHTML('beforeend', cardHTML);
-            });
-
-            currentMaintenanceWorkOrdersText = lineTextMsg;
-        };
-
-        window.copyMaintenanceOrderToClipboard = () => {
-            if (!currentMaintenanceWorkOrdersText) return;
-            navigator.clipboard.writeText(currentMaintenanceWorkOrdersText).then(() => {
-                showToast("คัดลอกสำเร็จ!", "นำข้อความไปวางส่งเข้ากลุ่ม LINE ช่างได้ทันที", "emerald");
-            }).catch(err => {
-                showToast("คัดลอกไม่สำเร็จ", "กรุณาลองเลือกคัดลอกด้วยตนเอง", "amber");
+            chartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['ปกติ', 'พบหนู', 'ชำรุด/เหยื่อหมด', 'ยังไม่ได้ตรวจ'],
+                    datasets: [{
+                        data: [safe, caught, issue, unchecked],
+                        backgroundColor: ['#10b981', '#f43f5e', '#f59e0b', '#334155'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94a3b8',
+                                font: { family: 'Sarabun', size: 11 },
+                                boxWidth: 10,
+                                padding: 12
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
             });
         };
 
-        window.printExecutiveReport = () => {
-            window.print();
-        };
-
-        // Standard Form & Modal Actions
         window.openInspectionModal = (trapId) => {
             const trapIdStr = trapId.toString();
             const zone = getZoneByTrapId(trapId);
-            
+            const record = activeRecords[trapIdStr];
+
             document.getElementById('formTrapId').value = trapIdStr;
             document.getElementById('formZone').value = zone;
+            document.getElementById('modalTitle').innerText = `จุดบันทึกตรวจเช็คกรงดักหนู #${trapIdStr.padStart(2, '0')}`;
+            document.getElementById('modalSubtitle').innerText = `${getZoneLabel(zone)} | หมายเลขกรง: #${trapIdStr.padStart(2, '0')}`;
             
-            document.getElementById('modalTrapBadge').innerHTML = `<span class="text-sm font-extrabold">#${trapIdStr.padStart(2, '0')}</span>`;
-            document.getElementById('modalTitle').innerText = `บันทึกข้อมูลกรงดักหนู #${trapIdStr.padStart(2, '0')}`;
-            document.getElementById('modalSubtitle').innerText = `ตำแหน่งตรวจวัด: ${getZoneLabel(zone)}`;
-
             const lastInspector = localStorage.getItem('last_inspector_name');
-            if (lastInspector) document.getElementById('formInspector').value = lastInspector;
-
-            const existing = activeRecords[trapIdStr];
-            if (existing) {
-                document.getElementById('formInspector').value = existing.inspector;
-                document.getElementById('formNotes').value = existing.notes || "";
-                
-                const radios = document.getElementsByName('formStatus');
-                radios.forEach((radio) => {
-                    if (radio.value === existing.status) {
-                        radio.checked = true;
-                        radio.dispatchEvent(new Event('change'));
-                    }
-                });
-
-                if (existing.status === 'CAUGHT') document.getElementById('formRatsCount').value = existing.ratsCount;
+            const inspectorSelect = document.getElementById('formInspector');
+            
+            if (record) {
+                inspectorSelect.value = record.inspector;
+            } else if (lastInspector && staffList.includes(lastInspector)) {
+                inspectorSelect.value = lastInspector;
             } else {
-                document.getElementById('formNotes').value = "";
+                inspectorSelect.selectedIndex = 0;
+            }
+
+            document.getElementById('formNotes').value = record ? (record.notes || '') : '';
+
+            removePhoto();
+            if (record && record.photo) {
+                document.getElementById('formPhotoBase64').value = record.photo;
+                document.getElementById('imgPreview').src = record.photo;
+                document.getElementById('photoPreviewContainer').classList.remove('hidden');
+            }
+
+            const statusRadios = document.getElementsByName('formStatus');
+            let currentStatus = record ? record.status : 'SAFE';
+            statusRadios.forEach(r => {
+                r.checked = (r.value === currentStatus);
+            });
+
+            toggleRatsInput(currentStatus === 'CAUGHT');
+            if (record && record.status === 'CAUGHT') {
+                document.getElementById('formRatsCount').value = record.ratsCount || 1;
+            } else {
                 document.getElementById('formRatsCount').value = 1;
-                const radios = document.getElementsByName('formStatus');
-                radios.forEach((radio) => {
-                    if (radio.value === 'SAFE') {
-                        radio.checked = true;
-                        radio.dispatchEvent(new Event('change'));
-                    }
-                });
             }
 
             document.getElementById('modalInspection').classList.remove('hidden');
@@ -1480,8 +1455,9 @@
         window.closeInspectionModal = () => document.getElementById('modalInspection').classList.add('hidden');
 
         window.toggleRatsInput = (show) => {
-            const ratsDiv = document.getElementById('divRatsCount');
-            ratsDiv.classList.toggle('hidden', !show);
+            const div = document.getElementById('divRatsCount');
+            if (show) div.classList.remove('hidden');
+            else div.classList.add('hidden');
         };
 
         window.submitInspection = async (event) => {
@@ -1489,8 +1465,15 @@
             
             const trapId = document.getElementById('formTrapId').value;
             const zone = document.getElementById('formZone').value;
-            const inspector = document.getElementById('formInspector').value.trim();
+            const inspector = document.getElementById('formInspector').value;
+            
+            if (!inspector) {
+                showToast("เลือกชื่อผู้ตรวจ", "กรุณาเลือกชื่อพนักงานจากรายการที่กำหนด", "amber");
+                return;
+            }
+
             const notes = document.getElementById('formNotes').value.trim();
+            const photo = document.getElementById('formPhotoBase64').value || null;
             
             let status = 'SAFE';
             const radios = document.getElementsByName('formStatus');
@@ -1510,6 +1493,7 @@
                 ratsCount: ratsCount,
                 inspector: inspector,
                 notes: notes,
+                photo: photo,
                 date: targetDate,
                 timestamp: new Date().toISOString(),
                 nodeId: activeNodeId
@@ -1517,43 +1501,77 @@
 
             if (isFirebaseConnected && db) {
                 try {
-                    const docRef = getFirebaseDocRef(documentId);
+                    const docRef = doc(db, 'rat_inspections', documentId);
                     await setDoc(docRef, reportPayload);
-                    showToast("บันทึกสำเร็จ", `ข้อมูลกรงดักที่ #${trapId.padStart(2, '0')} ถูกส่งขึ้นระบบคลาวด์แล้ว`, "emerald");
+                    showToast("บันทึกคลาวด์สำเร็จ", `อัปเดตกรง #${trapId.padStart(2, '0')} ขึ้นระบบสดแล้ว`, "emerald");
                 } catch (error) {
-                    console.error("Firestore writing error:", error);
                     fallbackSaveLocal(documentId, reportPayload);
                 }
             } else {
                 fallbackSaveLocal(documentId, reportPayload);
             }
 
+            removePhoto();
             closeInspectionModal();
         };
 
         const fallbackSaveLocal = (docId, payload) => {
             const stored = localStorage.getItem(`rat_inspections_${appId}`);
-            const allRecords = stored ? JSON.parse(stored) : getSampleInitialRecords();
+            const allRecords = stored ? JSON.parse(stored) : {};
             
             allRecords[docId] = payload;
             localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
             
             loadLocalInspections();
-            showToast("บันทึกออฟไลน์สำเร็จ", "ข้อมูลถูกจัดเก็บไว้บนอุปกรณ์ของคุณแล้ว", "emerald");
+            showToast("บันทึกออฟไลน์สำเร็จ", "จัดเก็บข้อมูลไว้บนอุปกรณ์เครื่องนี้เรียบร้อย", "emerald");
+        };
+
+        window.deleteInspectionReport = (trapId) => {
+            requestSupervisorPin(() => {
+                const targetDate = dateInput.value;
+                const documentId = `${targetDate}_${trapId}`;
+
+                if (isFirebaseConnected && db) {
+                    try {
+                        const docRef = doc(db, 'rat_inspections', documentId);
+                        deleteDoc(docRef);
+                        showToast("ลบรายการแล้ว", `อนุมัติลบผลการตรวจจุดดัก #${trapId.padStart(2, '0')}`, "amber");
+                    } catch (error) {
+                        fallbackDeleteLocal(documentId);
+                    }
+                } else {
+                    fallbackDeleteLocal(documentId);
+                }
+            });
+        };
+
+        const fallbackDeleteLocal = (docId) => {
+            const stored = localStorage.getItem(`rat_inspections_${appId}`);
+            if (stored) {
+                const allRecords = JSON.parse(stored);
+                if (allRecords[docId]) {
+                    delete allRecords[docId];
+                    localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
+                    loadLocalInspections();
+                    showToast("ลบข้อมูลประวัติออกแล้ว", "ถอนประวัติผลตรวจชิ้นนี้เสร็จสิ้น", "amber");
+                }
+            }
         };
 
         window.openBulkUpdateModal = () => {
             const lastInspector = localStorage.getItem('last_inspector_name');
-            if (lastInspector) document.getElementById('bulkInspector').value = lastInspector;
+            if (lastInspector && staffList.includes(lastInspector)) {
+                document.getElementById('bulkInspector').value = lastInspector;
+            }
             document.getElementById('modalBulk').classList.remove('hidden');
         };
 
         window.closeBulkModal = () => document.getElementById('modalBulk').classList.add('hidden');
 
-        window.submitBulkSafe = async () => {
-            const inspectorName = document.getElementById('bulkInspector').value.trim();
+        window.submitBulkSafe = () => {
+            const inspectorName = document.getElementById('bulkInspector').value;
             if (!inspectorName) {
-                showToast("ป้อนชื่อพนักงาน", "กรุณาระบุชื่อพนักงานผู้ดูแลความปลอดภัย", "amber");
+                showToast("เลือกชื่อผู้ตรวจ", "กรุณาระบุเลือกพนักงานจากรายการที่กำหนด", "amber");
                 return;
             }
 
@@ -1588,16 +1606,11 @@
             }
 
             if (isFirebaseConnected && db) {
-                try {
-                    for (const item of updatedItems) {
-                        const docRef = getFirebaseDocRef(item.id);
-                        await setDoc(docRef, item);
-                    }
-                    showToast("บันทึกด่วนสำเร็จ", `ส่งรายงานคลาวด์เพิ่ม ${updatedItems.length} จุดตรวจ`, "emerald");
-                } catch (error) {
-                    console.error("Bulk upload failure:", error);
-                    fallbackBulkSaveLocal(updatedItems);
-                }
+                updatedItems.forEach(async (item) => {
+                    const docRef = doc(db, 'rat_inspections', item.id);
+                    await setDoc(docRef, item);
+                });
+                showToast("ลงผลตรวจด่วนสำเร็จ", `อัปเดตกรงปกติจำนวน ${updatedItems.length} จุดขึ้นคลาวด์แล้ว`, "emerald");
             } else {
                 fallbackBulkSaveLocal(updatedItems);
             }
@@ -1607,42 +1620,11 @@
 
         const fallbackBulkSaveLocal = (payloadList) => {
             const stored = localStorage.getItem(`rat_inspections_${appId}`);
-            const allRecords = stored ? JSON.parse(stored) : getSampleInitialRecords();
+            const allRecords = stored ? JSON.parse(stored) : {};
             payloadList.forEach((item) => { allRecords[item.id] = item; });
             localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
             loadLocalInspections();
-            showToast("ลงผลตรวจด่วนแล้ว (Local)", `บันทึกสถานะปกติสำเร็จจำนวน ${payloadList.length} จุดตรวจ`, "emerald");
-        };
-
-        window.deleteInspectionReport = async (trapId) => {
-            const targetDate = dateInput.value;
-            const documentId = `${targetDate}_${trapId}`;
-
-            if (isFirebaseConnected && db) {
-                try {
-                    const docRef = getFirebaseDocRef(documentId);
-                    await deleteDoc(docRef);
-                    showToast("ลบรายการแล้ว", `ยกเลิกผลการตรวจจุดดัก #${trapId.padStart(2, '0')}`, "amber");
-                } catch (error) {
-                    console.error("Deletion failure:", error);
-                    fallbackDeleteLocal(documentId);
-                }
-            } else {
-                fallbackDeleteLocal(documentId);
-            }
-        };
-
-        const fallbackDeleteLocal = (docId) => {
-            const stored = localStorage.getItem(`rat_inspections_${appId}`);
-            if (stored) {
-                const allRecords = JSON.parse(stored);
-                if (allRecords[docId]) {
-                    delete allRecords[docId];
-                    localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
-                    loadLocalInspections();
-                    showToast("ลบข้อมูลประวัติออกแล้ว", "ถอนประวัติผลตรวจชิ้นนี้เสร็จสิ้น", "amber");
-                }
-            }
+            showToast("ลงผลตรวจด่วนแล้ว", `บันทึกสถานะปกติสำเร็จจำนวน ${payloadList.length} จุดตรวจ`, "emerald");
         };
 
         window.triggerClearAllToday = () => {
@@ -1651,30 +1633,28 @@
                 showToast("ไม่มีข้อมูลประวัติ", "วันนี้ยังไม่มีกิจกรรมที่ลงบันทึกรายงาน", "amber");
                 return;
             }
-            const targetDate = dateInput.value;
-            document.getElementById('confirmClearMessage').innerText = `คุณแน่ใจหรือว่าต้องการลบล้างผลตรวจทั้งหมด (${trapsToClear.length} กรง) ของวันที่ ${targetDate}? การลบข้อมูลประวัติจะไม่สามารถกู้คืนกลับมาได้`;
-            document.getElementById('modalConfirmClear').classList.remove('hidden');
+
+            requestSupervisorPin(() => {
+                const targetDate = dateInput.value;
+                document.getElementById('confirmClearMessage').innerText = `คุณแน่ใจหรือว่าต้องการลบล้างผลตรวจทั้งหมด (${trapsToClear.length} กรง) ของวันที่ ${targetDate}?`;
+                document.getElementById('modalConfirmClear').classList.remove('hidden');
+            });
         };
 
         window.closeConfirmClearModal = () => document.getElementById('modalConfirmClear').classList.add('hidden');
 
-        window.executeClearAllToday = async () => {
+        window.executeClearAllToday = () => {
             closeConfirmClearModal();
             const targetDate = dateInput.value;
             const trapsToClear = Object.keys(activeRecords);
 
             if (isFirebaseConnected && db) {
-                try {
-                    for (const trapId of trapsToClear) {
-                        const docId = `${targetDate}_${trapId}`;
-                        const docRef = getFirebaseDocRef(docId);
-                        await deleteDoc(docRef);
-                    }
-                    showToast("ล้างประวัติวันนี้แล้ว", "ลบประวัติของวันนี้ทั้งหมดบนคลาวด์แล้ว", "amber");
-                } catch (err) {
-                    console.error("Error clearing logs:", err);
-                    fallbackClearLocal(targetDate, trapsToClear);
-                }
+                trapsToClear.forEach(async (trapId) => {
+                    const documentId = `${targetDate}_${trapId}`;
+                    const docRef = doc(db, 'rat_inspections', documentId);
+                    await deleteDoc(docRef);
+                });
+                showToast("ล้างประวัติเสร็จสิ้น", `ลบข้อมูล ${trapsToClear.length} รายการออกแล้ว`, "amber");
             } else {
                 fallbackClearLocal(targetDate, trapsToClear);
             }
@@ -1687,8 +1667,246 @@
                 ids.forEach((id) => { delete allRecords[`${date}_${id}`]; });
                 localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
                 loadLocalInspections();
-                showToast("ล้างประวัติแล้ว (Local)", "ลบข้อมูลทั้งหมดที่บันทึกของวันนี้", "amber");
+                showToast("ล้างประวัติเสร็จสิ้น", "ลบข้อมูลทั้งหมดของวันออกแล้ว", "amber");
             }
+        };
+
+        window.openSummaryDashboardModal = () => {
+            document.getElementById('modalSummaryDashboard').classList.remove('hidden');
+            loadSummaryDataForRange(activeSummaryRange);
+        };
+
+        window.closeSummaryDashboardModal = () => document.getElementById('modalSummaryDashboard').classList.add('hidden');
+
+        window.switchSummaryTab = (tab) => {
+            const analyticsTab = document.getElementById('tabContent-ANALYTICS');
+            const workOrderTab = document.getElementById('tabContent-WORK_ORDER');
+            const btnAnalytics = document.getElementById('tabBtn-ANALYTICS');
+            const btnWorkOrder = document.getElementById('tabBtn-WORK_ORDER');
+
+            if (tab === 'ANALYTICS') {
+                analyticsTab.classList.remove('hidden');
+                workOrderTab.classList.add('hidden');
+                btnAnalytics.className = "px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white transition";
+                btnWorkOrder.className = "px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 transition";
+            } else {
+                analyticsTab.classList.add('hidden');
+                workOrderTab.classList.remove('hidden');
+                btnWorkOrder.className = "px-3.5 py-1.5 rounded-xl bg-amber-600 text-white transition";
+                btnAnalytics.className = "px-3.5 py-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-slate-200 transition";
+            }
+        };
+
+        window.changeSummaryRange = (range) => {
+            activeSummaryRange = range;
+            const ranges = ['LAST_7', 'LAST_30', 'THIS_MONTH', 'ALL_TIME'];
+            ranges.forEach(r => {
+                const btn = document.getElementById(`btnRange-${r}`);
+                if (btn) {
+                    btn.className = (r === range)
+                        ? "px-3 py-1.5 text-xs font-bold rounded-xl bg-indigo-600 text-white transition"
+                        : "px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 transition border border-slate-700";
+                }
+            });
+            loadSummaryDataForRange(range);
+        };
+
+        const loadSummaryDataForRange = (range) => {
+            let filteredList = [...allTimeStoredRecords];
+            const now = new Date();
+            const todayStr = getLocalDateString(now);
+
+            if (range === 'LAST_7') {
+                const limitDate = new Date();
+                limitDate.setDate(limitDate.getDate() - 7);
+                filteredList = filteredList.filter(item => new Date(item.date) >= limitDate);
+            } else if (range === 'LAST_30') {
+                const limitDate = new Date();
+                limitDate.setDate(limitDate.getDate() - 30);
+                filteredList = filteredList.filter(item => new Date(item.date) >= limitDate);
+            } else if (range === 'THIS_MONTH') {
+                const currentMonthPrefix = todayStr.substring(0, 7);
+                filteredList = filteredList.filter(item => item.date && item.date.startsWith(currentMonthPrefix));
+            }
+
+            const totalRats = filteredList.reduce((sum, item) => sum + (parseInt(item.ratsCount) || 0), 0);
+            const totalInspections = filteredList.length;
+            const totalIssues = filteredList.filter(item => item.status === 'ISSUE').length;
+
+            const zoneCounts = { 'A': 0, 'B': 0, 'C': 0, 'D': 0 };
+            const trapCounts = {};
+
+            filteredList.forEach(item => {
+                if (item.status === 'CAUGHT') {
+                    const count = parseInt(item.ratsCount) || 1;
+                    if (zoneCounts[item.zone] !== undefined) zoneCounts[item.zone] += count;
+                    trapCounts[item.trapId] = (trapCounts[item.trapId] || 0) + count;
+                }
+            });
+
+            let maxZone = '-';
+            let maxZoneCount = 0;
+            Object.keys(zoneCounts).forEach(z => {
+                if (zoneCounts[z] > maxZoneCount) {
+                    maxZoneCount = zoneCounts[z];
+                    maxZone = z;
+                }
+            });
+
+            document.getElementById('summaryTotalRats').innerText = totalRats;
+            document.getElementById('summaryTotalInspections').innerText = totalInspections;
+            document.getElementById('summaryTotalIssues').innerText = totalIssues;
+            document.getElementById('summaryHotspotZone').innerText = maxZone !== '-' ? getZoneLabel(maxZone) : 'ไม่มีระบุ';
+            document.getElementById('summaryHotspotZoneCount').innerText = `${maxZoneCount} ตัวที่พบในโซนนี้`;
+
+            // Render Hotspot Traps
+            const sortedTraps = Object.keys(trapCounts)
+                .map(tId => ({ trapId: tId, count: trapCounts[tId], zone: getZoneByTrapId(tId) }))
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 5);
+
+            const hotspotContainer = document.getElementById('summaryHotspotTrapsList');
+            if (sortedTraps.length === 0) {
+                hotspotContainer.innerHTML = `<p class="text-slate-500 text-xs italic py-2">ไม่พบประวัติหนูติดกรงในช่วงเวลานี้</p>`;
+            } else {
+                hotspotContainer.innerHTML = sortedTraps.map((item, idx) => `
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-slate-800 text-xs">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 font-bold flex items-center justify-center text-[10px]">${idx + 1}</span>
+                            <span class="font-bold text-slate-200">กรง #${item.trapId.padStart(2, '0')}</span>
+                            <span class="text-[10px] text-slate-400">(${getZoneLabel(item.zone)})</span>
+                        </div>
+                        <span class="font-extrabold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded">${item.count} ตัว</span>
+                    </div>
+                `).join('');
+            }
+
+            // Render Zone Distribution
+            const zoneContainer = document.getElementById('summaryZoneBreakdownList');
+            zoneContainer.innerHTML = ['A', 'B', 'C', 'D'].map(zCode => {
+                const cnt = zoneCounts[zCode] || 0;
+                const pct = totalRats > 0 ? Math.round((cnt / totalRats) * 100) : 0;
+                return `
+                    <div class="space-y-1">
+                        <div class="flex justify-between text-xs">
+                            <span class="text-slate-300">${getZoneLabel(zCode)}</span>
+                            <span class="font-bold text-slate-200">${cnt} ตัว (${pct}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden">
+                            <div class="bg-indigo-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // AUTOMATED QA INSIGHTS GENERATION
+            const autoRecBox = document.getElementById('summaryAutoRecommendations');
+            if (totalRats === 0) {
+                autoRecBox.innerHTML = `
+                    <p class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1.5"></i>สถานการณ์ปกติระดับสูงสุด (Safe Level 1)</p>
+                    <p class="text-slate-300">ไม่พบรายงานหนูติดกรงในช่วงเวลาที่เลือก คุณภาพความสะอาดเป็นไปตามเกณฑ์มาตรฐาน ISO/HACCP แนะนำให้เดินตรวจเช็คตามรอบปกติอย่างสม่ำเสมอ</p>
+                `;
+            } else {
+                autoRecBox.innerHTML = `
+                    <p class="text-rose-400 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i>พบจุดความเสี่ยงสะสมในพื้นที่ ${getZoneLabel(maxZone)}</p>
+                    <p class="text-slate-300">จากการประมวลผลย้อนหลัง พบจำนวนหนูสะสมรวม <strong>${totalRats} ตัว</strong> โดยหนาแน่นที่สุดใน <strong>${getZoneLabel(maxZone)} (${maxZoneCount} ตัว)</strong></p>
+                    <p class="text-amber-300 font-semibold mt-1">ข้อแนะนำสำหรับทีม QA & ผู้รับเหมา Pest Control:</p>
+                    <ul class="list-disc list-inside space-y-1 pl-1 text-slate-300">
+                        <li>เน้นการวางเหยื่อล่อเพิ่มบริเวณรอบกรง Hotspot 5 อันดับแรก</li>
+                        <li>ส่งทีมช่างอาคารเข้าตรวจสอบอุดรอยรั่วและซอกผนังในพื้นที่ ${getZoneLabel(maxZone)} ด่วน</li>
+                        <li>หากมีกรงชำรุดสะสม (${totalIssues} จุด) ให้ดำเนินการสับเปลี่ยนกรงสำรองใหม่ทันที</li>
+                    </ul>
+                `;
+            }
+
+            // Render Daily History Table
+            const dailyGroups = {};
+            filteredList.forEach(item => {
+                if (!item.date) return;
+                if (!dailyGroups[item.date]) {
+                    dailyGroups[item.date] = { date: item.date, safe: 0, caught: 0, issue: 0, total: 0 };
+                }
+                dailyGroups[item.date].total += 1;
+                if (item.status === 'SAFE') dailyGroups[item.date].safe += 1;
+                if (item.status === 'CAUGHT') dailyGroups[item.date].caught += (parseInt(item.ratsCount) || 1);
+                if (item.status === 'ISSUE') dailyGroups[item.date].issue += 1;
+            });
+
+            const sortedDates = Object.keys(dailyGroups).sort((a, b) => new Date(b) - new Date(a));
+            const tableBody = document.getElementById('summaryDailyTableBody');
+            
+            if (sortedDates.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-500">ไม่พบข้อมูลประวัติในช่วงเวลานี้</td></tr>`;
+            } else {
+                tableBody.innerHTML = sortedDates.map(dStr => {
+                    const row = dailyGroups[dStr];
+                    return `
+                        <tr class="hover:bg-slate-850/50 transition">
+                            <td class="py-2.5 px-3 font-bold text-slate-200">${dStr}</td>
+                            <td class="py-2.5 px-3 text-slate-300">${row.total} / 63 จุด</td>
+                            <td class="py-2.5 px-3 text-emerald-400 font-semibold">${row.safe} จุด</td>
+                            <td class="py-2.5 px-3 text-rose-400 font-bold">${row.caught} ตัว</td>
+                            <td class="py-2.5 px-3 text-amber-400 font-semibold">${row.issue} จุด</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // AUTO WORK ORDER GENERATION
+            const workOrderContainer = document.getElementById('workOrderContainer');
+            const activeIssueItems = Object.values(activeRecords).filter(item => item.status === 'ISSUE');
+
+            if (activeIssueItems.length === 0) {
+                workOrderContainer.innerHTML = `
+                    <div class="text-center py-10 bg-slate-900/40 rounded-2xl border border-slate-800">
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-3xl mb-2 block"></i>
+                        <p class="text-xs text-slate-300 font-bold">ไม่มีรายการกรงชำรุดในวันนี้</p>
+                        <p class="text-[10px] text-slate-500 mt-0.5">กรงดักหนูทั้ง 63 จุดอยู่ในสภาพพร้อมใช้งานปกติ</p>
+                    </div>
+                `;
+                currentMaintenanceWorkOrdersText = "ใบสั่งงานซ่อมบำรุงกรงดักหนูประจำวัน: ปกติทุกจุด ไม่พบกรงชำรุด";
+            } else {
+                let copyText = `🔧 ใบสั่งงานซ่อมบำรุงกรงดักหนู (Auto Work Order)\nวันที่: ${todayStr}\nพบกรงต้องแก้ไขทั้งหมด ${activeIssueItems.length} รายการ:\n\n`;
+                
+                workOrderContainer.innerHTML = activeIssueItems.map((item, idx) => {
+                    copyText += `${idx + 1}. กรง #${item.trapId.padStart(2, '0')} (${getZoneLabel(item.zone)}) - หมายเหตุ: ${item.notes || 'เหยื่อหมด/ชำรุด'}\n`;
+                    return `
+                        <div class="p-3.5 rounded-2xl bg-slate-900/60 border border-amber-500/30 flex items-start justify-between space-x-3">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xs mt-0.5">
+                                    #${item.trapId.padStart(2, '0')}
+                                </div>
+                                <div>
+                                    <h5 class="text-xs font-bold text-slate-100">${getZoneLabel(item.zone)}</h5>
+                                    <p class="text-[11px] text-amber-300 mt-0.5">รายละเอียด: "${item.notes || 'เหยื่อหมด หรือกรงปิดไม่สนิท ต้องบำรุงรักษา'}"</p>
+                                    <span class="text-[10px] text-slate-500 block mt-1">แจ้งโดย: ${item.inspector} (${new Date(item.timestamp).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })} น.)</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-1 rounded-lg border border-amber-500/20">
+                                รอทีมช่างเข้าซ่อม
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+
+                copyText += `\nกรุณาลงพื้นที่สับเปลี่ยนกรง และเติมเหยื่อล่อด่วนครับ`;
+                currentMaintenanceWorkOrdersText = copyText;
+            }
+        };
+
+        window.copyMaintenanceOrderToClipboard = () => {
+            if (!currentMaintenanceWorkOrdersText) return;
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = currentMaintenanceWorkOrdersText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+            showToast("ก๊อปปี้สำเร็จ", "คัดลอกรายการสั่งงานช่างลงคลิปบอร์ดแล้ว พร้อมวางส่งใน LINE", "emerald");
+        };
+
+        window.printExecutiveReport = () => {
+            window.print();
         };
 
         window.exportToCSV = () => {
@@ -1701,7 +1919,7 @@
             }
 
             let csvContent = "\uFEFF"; 
-            csvContent += "หมายเลขกรง,พื้นที่โซน,สถานะตรวจเช็ค,จำนวนหนูที่จับได้ (ตัว),ชื่อพนักงานผู้บันทึก,วันเวลาตรวจสอบ,หมายเหตุคำอธิบาย\n";
+            csvContent += "หมายเลขกรง,พื้นที่โซน,สถานะตรวจเช็ค,จำนวนหนูที่จับได้ (ตัว),ชื่อพนักงานผู้บันทึก,รหัสเครื่องNodeID,วันเวลาตรวจสอบ,หมายเหตุคำอธิบาย\n";
 
             for (let i = 1; i <= TOTAL_STATIONS; i++) {
                 const record = activeRecords[i.toString()];
@@ -1713,9 +1931,9 @@
                     if (record.status === 'ISSUE') statusTxt = "ชำรุด/เหยื่อหมด";
 
                     const safeNotes = record.notes ? record.notes.replace(/,/g, " ") : "";
-                    csvContent += `${i},${zoneLabel},${statusTxt},${record.ratsCount},${record.inspector},${record.timestamp},${safeNotes}\n`;
+                    csvContent += `${i},${zoneLabel},${statusTxt},${record.ratsCount},${record.inspector},${record.nodeId || '-'},${record.timestamp},${safeNotes}\n`;
                 } else {
-                    csvContent += `${i},${zoneLabel},ยังไม่ได้ตรวจเช็ค,0,-,-,-\n`;
+                    csvContent += `${i},${zoneLabel},ยังไม่ได้ตรวจเช็ค,0,-,-,-,-\n`;
                 }
             }
 
@@ -1727,7 +1945,7 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            showToast("ส่งออกข้อมูลสำเร็จ", `รายงานถูกดาวน์โหลดลงในเครื่องของคุณแล้ว`, "emerald");
+            showToast("ส่งออกข้อมูลสำเร็จ", `รายงาน CSV ถูกดาวน์โหลดลงในเครื่องของคุณแล้ว`, "emerald");
         };
 
         window.showToast = (title, message, theme = "emerald") => {
@@ -1761,30 +1979,116 @@
             }, 3500);
         };
 
-        dateInput.addEventListener('change', () => {
-            if (isFirebaseConnected) {
-                listenToInspectionUpdates();
+        const loadInspectionsForCurrentDate = () => {
+            const date = dateInput.value;
+            activeRecords = {};
+
+            if (isFirebaseConnected && db) {
+                if (unsubscribeRealtime) unsubscribeRealtime();
+
+                const q = query(collection(db, 'rat_inspections'), where("date", "==", date));
+                unsubscribeRealtime = onSnapshot(q, (snapshot) => {
+                    activeRecords = {};
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        activeRecords[data.trapId] = data;
+                    });
+                    renderInteractiveMap();
+                    updateDashboardKPIs();
+                    updateLogTimeline();
+                    renderChart();
+                }, (error) => {
+                    console.warn("Firestore error, switching to local mode:", error);
+                    loadLocalInspections();
+                });
             } else {
                 loadLocalInspections();
             }
+        };
+
+        const loadLocalInspections = () => {
+            const date = dateInput.value;
+            const stored = localStorage.getItem(`rat_inspections_${appId}`);
+            allTimeStoredRecords = stored ? Object.values(JSON.parse(stored)) : [];
+            
+            activeRecords = {};
+            allTimeStoredRecords.forEach((item) => {
+                if (item.date === date) {
+                    activeRecords[item.trapId] = item;
+                }
+            });
+
+            renderInteractiveMap();
+            updateDashboardKPIs();
+            updateLogTimeline();
+            renderChart();
+        };
+
+        const listenToCloudStaffConfig = () => {
+            if (isFirebaseConnected && db) {
+                if (unsubscribeStaffSync) unsubscribeStaffSync();
+                const docRef = doc(db, 'rat_settings', 'staff_config');
+                unsubscribeStaffSync = onSnapshot(docRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.data();
+                        if (data && Array.isArray(data.list) && data.list.length > 0) {
+                            staffList = data.list;
+                            localStorage.setItem(`staff_list_${appId}`, JSON.stringify(staffList));
+                            renderStaffDropdowns();
+                            renderStaffListUI();
+                        }
+                    }
+                }, (err) => {
+                    console.warn("Could not listen to cloud staff config:", err);
+                });
+            }
+        };
+
+        const initializeRealtimeDatabase = async () => {
+            try {
+                if (!firebaseConfig.apiKey || firebaseConfig.apiKey.includes("XXXXXX")) {
+                    throw new Error("Missing real Firebase config");
+                }
+
+                firebaseApp = initializeApp(firebaseConfig);
+                auth = getAuth(firebaseApp);
+                db = getFirestore(firebaseApp);
+
+                await signInAnonymously(auth);
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        isFirebaseConnected = true;
+                        document.getElementById('lblSystemModeStatus').innerText = "ระบบจริง (ซิงค์คลาวด์เรียลไทม์)";
+                        document.getElementById('lblUserNode').innerText = activeNodeId;
+                        showToast("เชื่อมต่อคลาวด์เรียลไทม์แล้ว", "ข้อมูลซิงค์ตรงกันทุกอุปกรณ์สดๆ", "emerald");
+                        
+                        // Sync Staff config from cloud
+                        listenToCloudStaffConfig();
+                        loadInspectionsForCurrentDate();
+                    }
+                });
+            } catch (err) {
+                console.warn("Using offline local database mode:", err.message);
+                isFirebaseConnected = false;
+                document.getElementById('lblSystemModeStatus').innerText = "โหมดบันทึกออฟไลน์ (Local Mode)";
+                document.getElementById('lblUserNode').innerText = activeNodeId;
+                loadLocalInspections();
+            }
+        };
+
+        dateInput.addEventListener('change', () => {
+            loadInspectionsForCurrentDate();
             showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
         });
 
         window.onload = () => {
-            renderInteractiveMap();
-            updateDashboardKPIs();
-            updateAnalyticsChart();
-
+            renderStaffDropdowns();
             initializeRealtimeDatabase();
-            
+
             document.getElementById('btnSync').addEventListener('click', () => {
-                if (isFirebaseConnected) {
-                    listenToInspectionUpdates();
-                    showToast("ซิงค์เรียบร้อย", "อัปเดตข้อมูลจากเซิร์ฟเวอร์หลักล่าสุด", "emerald");
-                } else {
-                    loadLocalInspections();
-                    showToast("อัปเดตแล้ว (Offline)", "ข้อมูลได้รับการดึงจากหน่วยความจำเรียบร้อย", "emerald");
-                }
+                loadInspectionsForCurrentDate();
+                showToast("อัปเดตข้อมูลแล้ว", "ดึงข้อมูลล่าสุดเรียบร้อย", "emerald");
             });
         };
     </script>
