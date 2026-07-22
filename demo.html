@@ -6,11 +6,11 @@
     <title>Smart Rat Trap Monitor - [DEMO SYSTEM]</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter & Sarabun for Thai compatibility -->
+    <!-- Google Fonts: Inter & Sarabun -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js for real-time analytics -->
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -32,7 +32,7 @@
             background: #64748b;
         }
 
-        /* Print setup for executive reports */
+        /* Print layout setup for executive reports */
         @media print {
             body * {
                 visibility: hidden;
@@ -56,26 +56,26 @@
 </head>
 <body class="h-full text-slate-100 flex flex-col antialiased">
 
-    <!-- Top Header Navigation -->
+    <!-- Top Header Navigation Bar -->
     <header class="bg-slate-800/90 border-b border-slate-700/50 sticky top-0 z-40 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Brand Logo & Title -->
                 <div class="flex items-center space-x-3">
-                    <div class="bg-gradient-to-tr from-amber-500 to-rose-500 p-2.5 rounded-xl shadow-lg shadow-rose-500/10 flex items-center justify-center animate-pulse">
+                    <div class="bg-gradient-to-tr from-amber-500 to-orange-500 p-2.5 rounded-xl shadow-lg shadow-amber-500/20 flex items-center justify-center">
                         <svg class="w-6 h-6 text-slate-900" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-lg font-bold bg-gradient-to-r from-amber-200 via-rose-300 to-indigo-300 bg-clip-text text-transparent leading-none">
+                        <h1 class="text-lg font-bold bg-gradient-to-r from-amber-200 via-orange-300 to-yellow-200 bg-clip-text text-transparent leading-none">
                             RAT TRAP [DEMO]
                         </h1>
-                        <span class="text-xs text-amber-400 font-bold tracking-wider">ระบบทดลองเล่นออฟไลน์จำลอง (ไม่มีผลต่อระบบจริง)</span>
+                        <span class="text-xs text-amber-400 font-bold tracking-wider" id="lblSystemModeStatus">🟡 โหมดจำลองนำเสนอ (Offline Demo)</span>
                     </div>
                 </div>
 
-                <!-- Date Selector and Executive Dashboard Action -->
+                <!-- Date Selector, Staff Mgmt, PIN & Executive Dashboard Actions -->
                 <div class="flex items-center space-x-2 sm:space-x-3">
                     <!-- Executive Summary Dashboard Button -->
                     <button type="button" onclick="openSummaryDashboardModal()" class="px-3 py-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-500/20 transition duration-200 flex items-center space-x-1.5 border border-indigo-400/30">
@@ -84,11 +84,17 @@
                         <span class="md:hidden">📊 สรุปภาพรวม</span>
                     </button>
 
+                    <!-- Staff Management Button (Protected by Supervisor PIN) -->
+                    <button type="button" onclick="requestSupervisorPin(openStaffModal)" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-750 rounded-xl transition duration-200 text-slate-300 hover:text-indigo-400" title="จัดการรายชื่อพนักงาน (เฉพาะหัวหน้า/PIN)">
+                        <i class="fa-solid fa-users text-xs"></i>
+                    </button>
+
                     <!-- Change PIN Settings Button -->
                     <button type="button" onclick="openChangePinModal()" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-750 rounded-xl transition duration-200 text-slate-300 hover:text-amber-400" title="ตั้งค่าเปลี่ยนรหัส PIN ผู้ดูแล">
                         <i class="fa-solid fa-key text-xs"></i>
                     </button>
 
+                    <!-- Date Selection Input -->
                     <div class="flex items-center bg-slate-900/80 border border-slate-700 rounded-xl overflow-hidden shadow-inner">
                         <button type="button" onclick="adjustDate(-1)" class="px-2.5 py-2 hover:bg-slate-750 text-slate-400 hover:text-indigo-400 transition" title="วันก่อนหน้า">
                             <i class="fa-solid fa-chevron-left text-xs"></i>
@@ -105,7 +111,7 @@
                         </button>
                     </div>
                     
-                    <button id="btnSync" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-750 rounded-xl transition duration-200 text-slate-300 hover:text-emerald-400" title="ซิงค์ข้อมูลใหม่">
+                    <button id="btnSync" class="p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-750 rounded-xl transition duration-200 text-slate-300 hover:text-amber-400" title="รีเฟรชข้อมูลโหมด DEMO">
                         <i class="fa-solid fa-rotate" id="syncIcon"></i>
                     </button>
                 </div>
@@ -113,7 +119,7 @@
         </div>
     </header>
 
-    <!-- Main Content Grid Area -->
+    <!-- Main Content Area -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 overflow-y-auto">
         
         <!-- Live Statistics Grid Cards -->
@@ -183,7 +189,6 @@
 
         </div>
 
-        <!-- Tabbed Navigation / Filter Control -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-800/40 p-4 rounded-2xl border border-slate-700/30">
             <!-- Filter categories -->
             <div class="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -217,7 +222,6 @@
             </div>
         </div>
 
-        <!-- Dashboard Layout Split -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             <!-- Interactive Visual Grid Map of 63 Traps (Left Area) -->
@@ -226,10 +230,10 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-base font-bold text-slate-200 flex items-center space-x-2">
-                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-indigo-500 animate-ping"></span>
-                            <span>ผังแผนที่จุดตรวจกรงดักหนู (63 Stations Map)</span>
+                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 animate-ping"></span>
+                            <span>ผังแผนที่จุดตรวจกรงดักหนู (63 Stations DEMO Map)</span>
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">คลิกที่ช่องกล่องจุดตรวจเพื่อลงบันทึกผลการตรวจสอบของแต่ละวัน</p>
+                        <p class="text-xs text-slate-400 mt-1">ทดลองคลิกที่กล่องจุดตรวจเพื่อบันทึกผลการตรวจสอบในโหมดสาธิต</p>
                     </div>
                     <div class="hidden sm:flex items-center space-x-3 text-[11px] text-slate-400 bg-slate-800/80 p-2 rounded-xl border border-slate-700/40">
                         <span class="flex items-center space-x-1"><span class="w-2.5 h-2.5 rounded bg-slate-700 inline-block"></span><span>รอตรวจ</span></span>
@@ -241,7 +245,7 @@
 
                 <!-- Scrollable Zone layout -->
                 <div class="space-y-6">
-                    <!-- Zone 1 -->
+                    <!-- Zone A -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-indigo-400">
@@ -253,7 +257,7 @@
                         <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneA"></div>
                     </div>
 
-                    <!-- Zone 2 -->
+                    <!-- Zone B -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-pink-400">
@@ -265,7 +269,7 @@
                         <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneB"></div>
                     </div>
 
-                    <!-- Zone 3 -->
+                    <!-- Zone C -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-cyan-400">
@@ -277,7 +281,7 @@
                         <div class="grid grid-cols-5 sm:grid-cols-10 gap-2" id="gridZoneC"></div>
                     </div>
 
-                    <!-- Zone 4 -->
+                    <!-- Zone D -->
                     <div class="bg-slate-900/40 rounded-2xl p-4 border border-slate-800/80">
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex items-center space-x-2 text-amber-400">
@@ -292,7 +296,6 @@
 
             </section>
 
-            <!-- Dashboard Widgets, Analytics Chart, and Log Area -->
             <section class="lg:col-span-5 flex flex-col gap-6">
 
                 <div class="bg-slate-800/30 rounded-3xl p-5 border border-slate-800 shadow-xl">
@@ -334,7 +337,7 @@
                     </div>
 
                     <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-[11px] text-slate-500">
-                        <span>Status: Offline Demo Isolated</span>
+                        <span>Status: Isolated DEMO Environment</span>
                         <span class="font-mono bg-slate-900 px-2 py-0.5 rounded text-amber-400" id="lblUserNode">DEMO_NODE</span>
                     </div>
                 </div>
@@ -344,7 +347,7 @@
         </div>
     </main>
 
-    <!-- Modal: Executive Summary & Automated Workflows Dashboard -->
+    <!-- Executive Dashboard Modal -->
     <div id="modalSummaryDashboard" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity no-print" onclick="closeSummaryDashboardModal()"></div>
@@ -361,7 +364,7 @@
                         <div>
                             <h3 class="text-base font-bold text-slate-100 flex items-center space-x-2">
                                 <span>แดชบอร์ดสรุปสถิติ & จัดการงานส่งต่ออัตโนมัติ [DEMO]</span>
-                                <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] px-2 py-0.5 rounded-full">Executive & Work Orders</span>
+                                <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] px-2 py-0.5 rounded-full">Executive & Work Orders</span>
                             </h3>
                             <p class="text-xs text-slate-400 mt-0.5">ระบบสรุปสถิติมุมสูง บทวิเคราะห์ QA และใบสั่งงานซ่อมบำรุงอัตโนมัติ</p>
                         </div>
@@ -523,7 +526,7 @@
 
                 <!-- Modal Footer -->
                 <div class="bg-slate-900 px-6 py-3 border-t border-slate-800 flex justify-between items-center text-xs no-print">
-                    <span class="text-slate-500">ข้อมูลโหมดออฟไลน์เดโม่จำลองสำหรับการนำเสนอ</span>
+                    <span class="text-slate-500">ข้อมูลโหมดจำลอง (DEMO) ไม่ส่งผลกระทบต่อคลาวด์จริง</span>
                     <button type="button" onclick="closeSummaryDashboardModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl transition">
                         ปิดหน้าต่าง
                     </button>
@@ -533,7 +536,7 @@
         </div>
     </div>
 
-    <!-- Modal: Individual Inspection Report Form -->
+    <!-- Modal: Individual Inspection Entry -->
     <div id="modalInspection" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeInspectionModal()"></div>
@@ -546,7 +549,7 @@
                             <i class="fa-solid fa-box"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-slate-100" id="modalTitle">จุดบันทึกตรวจเช็คกรงดักหนู</h3>
+                            <h3 class="text-base font-bold text-slate-100" id="modalTitle">จุดบันทึกตรวจเช็คกรงดักหนู [DEMO]</h3>
                             <p class="text-xs text-slate-400 mt-0.5" id="modalSubtitle">หมายเลขกรง: #01 | โซน A คลังสินค้า</p>
                         </div>
                     </div>
@@ -565,15 +568,10 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
                                 <i class="fa-regular fa-user"></i>
                             </span>
-                            <input type="text" id="formInspector" required list="staffList" placeholder="พิมพ์ชื่อผู้ตรวจสอบ..."
-                                   class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 placeholder-slate-500 text-sm focus:outline-none transition-all">
-                            <datalist id="staffList">
-                                <option value="สมชาย เจริญสุข (DEMO)">
-                                <option value="วรรณิภา มั่นคง (DEMO)">
-                                <option value="อนันต์ ยอดรักษ์ (DEMO)">
-                                <option value="ปิยะพงษ์ เลิศวิไล (DEMO)">
-                                <option value="กิตติศักดิ์ ศรีสุข (DEMO)">
-                            </datalist>
+                            <select id="formInspector" required 
+                                    class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-amber-500 focus:border-amber-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 text-sm focus:outline-none transition-all">
+                                <option value="" disabled selected>-- กรุณาเลือกรายชื่อพนักงาน --</option>
+                            </select>
                         </div>
                     </div>
 
@@ -626,7 +624,7 @@
                     <!-- OPTIONAL PHOTO ATTACHMENT FIELD -->
                     <div>
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                            <i class="fa-solid fa-camera text-indigo-400 mr-1"></i>ถ่ายรูปแนบหลักฐาน [DEMO] (ไม่บังคับ / บีบอัดไฟล์จิ๋วลื่นไหล)
+                            <i class="fa-solid fa-camera text-indigo-400 mr-1"></i>ถ่ายรูปแนบหลักฐาน [DEMO] (บีบอัดภาพจิ๋วให้อัตโนมัติ)
                         </label>
                         <input type="file" id="formPhotoInput" accept="image/*" capture="environment" onchange="handlePhotoCompress(event)" 
                                class="text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer w-full bg-slate-900 p-1.5 rounded-xl border border-slate-700">
@@ -645,8 +643,8 @@
                             ยกเลิก
                         </button>
                         <button type="submit" 
-                                class="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-rose-600/10">
-                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>บันทึกผลตรวจเช็ค
+                                class="px-5 py-2.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-amber-600/10">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>บันทึกผล DEMO
                         </button>
                     </div>
                 </form>
@@ -654,7 +652,7 @@
         </div>
     </div>
 
-    <!-- Modal: Supervisor PIN Verification -->
+    <!-- Supervisor PIN Modal -->
     <div id="modalPin" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closePinModal()"></div>
@@ -662,17 +660,17 @@
 
             <div class="inline-block align-bottom bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full border border-slate-700/60 p-6 space-y-4">
                 <div class="text-center">
-                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-3">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-3">
                         <i class="fa-solid fa-user-shield text-xl"></i>
                     </div>
-                    <h3 class="text-base font-bold text-slate-100">ยืนยันรหัส PIN ผู้ดูแลระบบ [DEMO]</h3>
-                    <p class="text-xs text-slate-400 mt-1">เฉพาะหัวหน้างาน/ผู้บริหารเท่านั้น <br><span class="text-indigo-400 font-semibold">(รหัสเริ่มต้นมาตรฐาน: 1234)</span></p>
+                    <h3 class="text-base font-bold text-slate-100">ยืนยันรหัส PIN ผู้ดูแล [DEMO]</h3>
+                    <p class="text-xs text-slate-400 mt-1">เฉพาะหัวหน้างาน/ผู้บริหารเท่านั้น <br><span class="text-amber-400 font-semibold">(รหัสเริ่มต้นมาตรฐาน: 1234)</span></p>
                 </div>
 
-                <div>
+                <div class="space-y-3">
                     <input type="password" id="pinInput" maxlength="4" placeholder="• • • •" 
-                           class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 block w-full py-3 text-center text-2xl font-extrabold tracking-widest text-slate-100 focus:outline-none">
-                    <p id="pinErrorMsg" class="text-xs text-rose-400 text-center mt-2 hidden font-bold">
+                           class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-amber-500 focus:border-amber-500 block w-full py-2.5 text-center text-xl font-bold tracking-widest text-slate-100 focus:outline-none">
+                    <p id="pinErrorMsg" class="text-xs text-rose-400 text-center hidden font-bold">
                         <i class="fa-solid fa-circle-exclamation mr-1"></i>รหัส PIN ไม่ถูกต้อง
                     </p>
                 </div>
@@ -683,15 +681,61 @@
                         ยกเลิก
                     </button>
                     <button type="button" onclick="verifyPinAndExecute()" 
-                            class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-indigo-600/10">
-                        <i class="fa-solid fa-key mr-1"></i>อนุมัติการลบ
+                            class="flex-1 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition duration-200 shadow-lg shadow-amber-600/10">
+                        ยืนยันรหัส PIN
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Change Supervisor PIN -->
+    <!-- Staff Management Modal -->
+    <div id="modalStaff" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeStaffModal()"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block align-bottom bg-slate-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-700/60 p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                    <div class="flex items-center space-x-2 text-indigo-400">
+                        <i class="fa-solid fa-users text-lg"></i>
+                        <h3 class="text-base font-bold text-slate-100">จัดการรายชื่อพนักงานเดินตรวจ [DEMO]</h3>
+                    </div>
+                    <button type="button" onclick="closeStaffModal()" class="text-slate-400 hover:text-slate-200">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Add New Staff Input -->
+                <div class="space-y-2">
+                    <label for="newStaffNameInput" class="block text-xs font-bold text-slate-400 uppercase tracking-wider">เพิ่มพนักงานคนใหม่</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="newStaffNameInput" placeholder="กรอกชื่อ-นามสกุล พนักงาน..." 
+                               class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-slate-100 text-xs focus:outline-none focus:border-indigo-500 flex-1">
+                        <button type="button" onclick="addNewStaffName()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition shadow">
+                            <i class="fa-solid fa-plus mr-1"></i>เพิ่ม
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Staff List Container -->
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider">รายชื่อพนักงานปัจจุบันในระบบ</label>
+                    <div id="staffListUIContainer" class="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+                        <!-- JS Dynamic Render -->
+                    </div>
+                </div>
+
+                <div class="pt-2 flex justify-end">
+                    <button type="button" onclick="closeStaffModal()" class="px-4 py-2 bg-slate-900 border border-slate-700 hover:bg-slate-750 text-slate-300 text-xs font-bold rounded-xl transition">
+                        ปิดหน้าต่าง
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change PIN Modal -->
     <div id="modalChangePin" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeChangePinModal()"></div>
@@ -741,7 +785,7 @@
         </div>
     </div>
 
-    <!-- Modal: Bulk Complete Validation -->
+    <!-- Modal: Bulk Complete -->
     <div id="modalBulk" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeBulkModal()"></div>
@@ -760,8 +804,10 @@
 
                 <div class="space-y-3">
                     <label for="bulkInspector" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">ระบุชื่อพนักงานผู้ตรวจเช็ค <span class="text-rose-400">*</span></label>
-                    <input type="text" id="bulkInspector" placeholder="ป้อนชื่อผู้ดูแล..." required
-                           class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full px-3 py-2.5 text-slate-100 text-sm focus:outline-none">
+                    <select id="bulkInspector" required 
+                            class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full px-3 py-2.5 text-slate-100 text-sm focus:outline-none">
+                        <option value="" disabled selected>-- กรุณาเลือกรายชื่อพนักงาน --</option>
+                    </select>
                 </div>
 
                 <div class="flex space-x-3 pt-2">
@@ -809,10 +855,10 @@
         </div>
     </div>
 
-    <!-- Alert Toast Notification Component -->
+    <!-- Toast Notification -->
     <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-12 opacity-0 transition-all duration-300 pointer-events-none">
         <div class="bg-slate-800 border border-slate-700 text-slate-100 px-4 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 max-w-sm">
-            <div id="toastIconContainer" class="w-8 h-8 rounded-full flex items-center justify-center text-emerald-400 bg-emerald-500/10">
+            <div id="toastIconContainer" class="w-8 h-8 rounded-full flex items-center justify-center text-amber-400 bg-amber-500/10">
                 <i class="fa-solid fa-circle-check" id="toastIcon"></i>
             </div>
             <div>
@@ -822,10 +868,21 @@
         </div>
     </div>
 
-    <!-- Offline Standalone Demo Script Logic -->
     <script>
         const TOTAL_STATIONS = 63;
         const appId = "smart-rat-trap-demo"; 
+
+        // DEVICE NODE ID GENERATOR
+        const getOrCreateNodeId = () => {
+            let nodeId = localStorage.getItem(`device_node_id_${appId}`);
+            if (!nodeId) {
+                nodeId = 'DEMO_NODE_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+                localStorage.setItem(`device_node_id_${appId}`, nodeId);
+            }
+            return nodeId;
+        };
+
+        const activeNodeId = getOrCreateNodeId();
 
         const getSupervisorPin = () => {
             return localStorage.getItem(`supervisor_pin_${appId}`) || "1234";
@@ -842,12 +899,93 @@
         let chartInstance = null; 
         let activeSummaryRange = 'LAST_7';
         let currentMaintenanceWorkOrdersText = "";
-        let activeNodeId = 'DEMO_NODE';
 
-        // Date Handling (Buddhist Era BE to Gregorian AD normalizer)
+        // STAFF LIST MANAGEMENT
+        const DEFAULT_STAFF = ["สมชาย เจริญสุข (DEMO)", "วรรณิภา มั่นคง (DEMO)", "อนันต์ ยอดรักษ์ (DEMO)", "ปิยะพงษ์ เลิศวิไล (DEMO)", "กิตติศักดิ์ ศรีสุข (DEMO)"];
+        let staffList = JSON.parse(localStorage.getItem(`staff_list_${appId}`)) || DEFAULT_STAFF;
+
+        const saveAndSyncStaffList = () => {
+            localStorage.setItem(`staff_list_${appId}`, JSON.stringify(staffList));
+            renderStaffDropdowns();
+            renderStaffListUI();
+        };
+
+        const renderStaffDropdowns = () => {
+            const selects = [document.getElementById('formInspector'), document.getElementById('bulkInspector')];
+            selects.forEach(select => {
+                if (!select) return;
+                const currentVal = select.value;
+                select.innerHTML = '<option value="" disabled selected>-- กรุณาเลือกรายชื่อพนักงาน --</option>';
+                staffList.forEach(name => {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = name;
+                    select.appendChild(opt);
+                });
+                if (currentVal && staffList.includes(currentVal)) {
+                    select.value = currentVal;
+                }
+            });
+        };
+
+        window.openStaffModal = () => {
+            renderStaffListUI();
+            document.getElementById('modalStaff').classList.remove('hidden');
+        };
+
+        window.closeStaffModal = () => {
+            document.getElementById('modalStaff').classList.add('hidden');
+        };
+
+        window.addNewStaffName = () => {
+            const input = document.getElementById('newStaffNameInput');
+            const name = input.value.trim();
+            if (!name) {
+                showToast("กรอกชื่อพนักงาน", "กรุณาระบุชื่อพนักงานที่ต้องการเพิ่ม", "amber");
+                return;
+            }
+            if (staffList.includes(name)) {
+                showToast("ชื่อซ้ำในระบบ", "มีชื่อพนักงานคนนี้อยู่ในระบบแล้ว", "amber");
+                return;
+            }
+            staffList.push(name);
+            input.value = "";
+            saveAndSyncStaffList();
+            showToast("เพิ่มพนักงานสำเร็จ", `เพิ่มคุณ ${name} เข้าสู่ระบบ DEMO เรียบร้อยแล้ว`, "emerald");
+        };
+
+        window.removeStaffName = (index) => {
+            if (staffList.length <= 1) {
+                showToast("ไม่สามารถลบได้", "ต้องมีรายชื่อพนักงานอย่างน้อย 1 คนในระบบ", "amber");
+                return;
+            }
+            const removedName = staffList[index];
+            staffList.splice(index, 1);
+            saveAndSyncStaffList();
+            showToast("ลบพนักงานสำเร็จ", `ลบคุณ ${removedName} ออกจากระบบ DEMO แล้ว`, "amber");
+        };
+
+        const renderStaffListUI = () => {
+            const container = document.getElementById('staffListUIContainer');
+            if (!container) return;
+            if (staffList.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 italic py-2">ไม่มีรายชื่อพนักงานในระบบ</p>';
+                return;
+            }
+            container.innerHTML = staffList.map((name, idx) => `
+                <div class="flex justify-between items-center bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 text-xs">
+                    <span class="text-slate-200 font-semibold"><i class="fa-regular fa-user mr-2 text-indigo-400"></i>${name}</span>
+                    <button type="button" onclick="removeStaffName(${idx})" class="text-slate-500 hover:text-rose-400 transition px-2 py-1" title="ลบรายชื่อ">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `).join('');
+        };
+
+        // DATE FORMATTER (BE to AD normalize)
         const getLocalDateString = (d = new Date()) => {
             let year = d.getFullYear();
-            if (year > 2400) year -= 543; // BE to AD
+            if (year > 2400) year -= 543;
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
@@ -865,10 +1003,9 @@
             d.setDate(d.getDate() + days);
             dateInput.value = getLocalDateString(d);
             loadLocalInspections();
-            showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
+            showToast("สลับวันที่ข้อมูล DEMO", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
         };
 
-        // Photo compression handler (Client-Side Image Compressor < 50KB)
         window.handlePhotoCompress = (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -908,7 +1045,6 @@
             document.getElementById('photoPreviewContainer').classList.add('hidden');
         };
 
-        // Supervisor PIN Verification Logic (Fixed execution order)
         window.requestSupervisorPin = (actionCallback) => {
             pendingPinAction = actionCallback;
             document.getElementById('pinInput').value = '';
@@ -935,7 +1071,6 @@
             }
         };
 
-        // Change PIN Modal Logic
         window.openChangePinModal = () => {
             document.getElementById('oldPinInput').value = '';
             document.getElementById('newPinInput').value = '';
@@ -979,17 +1114,17 @@
 
         const getSampleInitialRecords = () => {
             const initial = {};
-            const sampleInspectors = ["สมชาย เจริญสุข (DEMO)", "วรรณิภา มั่นคง (DEMO)", "อนันต์ ยอดรักษ์ (DEMO)", "ปิยะพงษ์ เลิศวิไล (DEMO)"];
+            const sampleInspectors = staffList;
             
             const datesToSeed = [];
-            for (let i = 0; i < 6; i++) {
+            for (let i = 0; i < 7; i++) {
                 const d = new Date();
                 d.setDate(d.getDate() - i);
                 datesToSeed.push(getLocalDateString(d));
             }
 
             datesToSeed.forEach((dStr, idx) => {
-                const activeTraps = [5, 12, 18, 22, 33, 45, 52];
+                const activeTraps = [3, 8, 12, 18, 22, 28, 33, 45, 52, 59];
                 activeTraps.forEach((trapId) => {
                     let status = "SAFE";
                     let count = 0;
@@ -998,14 +1133,17 @@
                     if (trapId === 12 || (trapId === 33 && idx % 2 === 0)) {
                         status = "CAUGHT";
                         count = idx === 0 ? 2 : 1;
-                        notes = "ตรวจพบหนูติดกรงแบบสปริง (DEMO)";
+                        notes = "พบหนูติดกรงแบบสปริง (DEMO Presentation)";
                     } else if (trapId === 45 && idx % 2 === 0) {
                         status = "ISSUE";
-                        notes = "เหยื่อล่อโดนน้ำเปื่อยหมดกรง เปลี่ยนใหม่ด่วน";
-                    } else if (trapId === 5 && idx === 1) {
+                        notes = "เหยื่อล่อโดนน้ำเปื่อยหมดกรง ต้องเปลี่ยนใหม่";
+                    } else if (trapId === 8 && idx === 1) {
+                        status = "ISSUE";
+                        notes = "ประตูสปริงฝืด ปิดไม่สนิท";
+                    } else if (trapId === 52 && idx <= 2) {
                         status = "CAUGHT";
                         count = 1;
-                        notes = "พบหนูติดบริเวณแนวรั้ว";
+                        notes = "พบหนูติดบริเวณแนวรั้วภายนอก";
                     }
 
                     const docId = `${dStr}_${trapId}`;
@@ -1019,7 +1157,7 @@
                         timestamp: new Date(new Date(dStr).getTime() + (8 + Math.random() * 4) * 3600000).toISOString(),
                         notes: notes,
                         date: dStr,
-                        nodeId: 'DEMO_NODE'
+                        nodeId: activeNodeId
                     };
                 });
             });
@@ -1217,7 +1355,7 @@
                                     <span class="text-xs font-bold text-slate-100">กรง #${log.trapId.padStart(2, '0')}</span>
                                     <span class="text-[10px] text-slate-500">${getZoneLabel(log.zone)}</span>
                                 </div>
-                                <p class="text-[11px] text-slate-300 mt-0.5">ผู้ตรวจ: ${log.inspector}</p>
+                                <p class="text-[11px] text-slate-300 mt-0.5">ผู้ตรวจ: ${log.inspector} <span class="text-[9px] text-slate-500 font-mono ml-1">(${log.nodeId || 'N/A'})</span></p>
                                 ${log.photo ? `<div class="mt-1.5"><img src="${log.photo}" class="w-16 h-16 object-cover rounded-lg border border-slate-700 shadow" alt="หลักฐาน"></div>` : ''}
                                 ${log.notes ? `<p class="text-[10px] text-slate-400 bg-slate-900/60 p-1.5 rounded-lg border border-slate-800 mt-1.5 max-w-xs italic">"${log.notes}"</p>` : ''}
                             </div>
@@ -1290,11 +1428,20 @@
 
             document.getElementById('formTrapId').value = trapIdStr;
             document.getElementById('formZone').value = zone;
-            document.getElementById('modalTitle').innerText = `จุดบันทึกตรวจเช็คกรงดักหนู #${trapIdStr.padStart(2, '0')}`;
+            document.getElementById('modalTitle').innerText = `จุดบันทึกตรวจเช็คกรงดักหนู #${trapIdStr.padStart(2, '0')} [DEMO]`;
             document.getElementById('modalSubtitle').innerText = `${getZoneLabel(zone)} | หมายเลขกรง: #${trapIdStr.padStart(2, '0')}`;
             
             const lastInspector = localStorage.getItem(`last_inspector_${appId}`);
-            document.getElementById('formInspector').value = record ? record.inspector : (lastInspector || '');
+            const inspectorSelect = document.getElementById('formInspector');
+            
+            if (record) {
+                inspectorSelect.value = record.inspector;
+            } else if (lastInspector && staffList.includes(lastInspector)) {
+                inspectorSelect.value = lastInspector;
+            } else {
+                inspectorSelect.selectedIndex = 0;
+            }
+
             document.getElementById('formNotes').value = record ? (record.notes || '') : '';
 
             removePhoto();
@@ -1333,7 +1480,13 @@
             
             const trapId = document.getElementById('formTrapId').value;
             const zone = document.getElementById('formZone').value;
-            const inspector = document.getElementById('formInspector').value.trim();
+            const inspector = document.getElementById('formInspector').value;
+
+            if (!inspector) {
+                showToast("เลือกชื่อผู้ตรวจ", "กรุณาเลือกชื่อพนักงานจากรายการที่กำหนด", "amber");
+                return;
+            }
+
             const notes = document.getElementById('formNotes').value.trim();
             const photo = document.getElementById('formPhotoBase64').value || null;
             
@@ -1374,7 +1527,7 @@
             localStorage.setItem(`rat_inspections_${appId}`, JSON.stringify(allRecords));
             
             loadLocalInspections();
-            showToast("บันทึกออฟไลน์สำเร็จ", "ข้อมูลถูกจัดเก็บไว้บนอุปกรณ์จำลองเครื่องนี้เรียบร้อย", "emerald");
+            showToast("บันทึก DEMO สำเร็จ", "จัดเก็บข้อมูลการสาธิตไว้ในเบราว์เซอร์เรียบร้อย", "emerald");
         };
 
         window.deleteInspectionReport = (trapId) => {
@@ -1400,16 +1553,18 @@
 
         window.openBulkUpdateModal = () => {
             const lastInspector = localStorage.getItem(`last_inspector_${appId}`);
-            if (lastInspector) document.getElementById('bulkInspector').value = lastInspector;
+            if (lastInspector && staffList.includes(lastInspector)) {
+                document.getElementById('bulkInspector').value = lastInspector;
+            }
             document.getElementById('modalBulk').classList.remove('hidden');
         };
 
         window.closeBulkModal = () => document.getElementById('modalBulk').classList.add('hidden');
 
         window.submitBulkSafe = () => {
-            const inspectorName = document.getElementById('bulkInspector').value.trim();
+            const inspectorName = document.getElementById('bulkInspector').value;
             if (!inspectorName) {
-                showToast("ป้อนชื่อพนักงาน", "กรุณาระบุชื่อพนักงานผู้ดูแลความปลอดภัย", "amber");
+                showToast("เลือกชื่อผู้ตรวจ", "กรุณาระบุเลือกพนักงานจากรายการที่กำหนด", "amber");
                 return;
             }
 
@@ -1738,7 +1893,7 @@
             }
 
             let csvContent = "\uFEFF"; 
-            csvContent += "หมายเลขกรง,พื้นที่โซน,สถานะตรวจเช็ค,จำนวนหนูที่จับได้ (ตัว),ชื่อพนักงานผู้บันทึก,วันเวลาตรวจสอบ,หมายเหตุคำอธิบาย\n";
+            csvContent += "หมายเลขกรง,พื้นที่โซน,สถานะตรวจเช็ค,จำนวนหนูที่จับได้ (ตัว),ชื่อพนักงานผู้บันทึก,รหัสเครื่องNodeID,วันเวลาตรวจสอบ,หมายเหตุคำอธิบาย\n";
 
             for (let i = 1; i <= TOTAL_STATIONS; i++) {
                 const record = activeRecords[i.toString()];
@@ -1750,9 +1905,9 @@
                     if (record.status === 'ISSUE') statusTxt = "ชำรุด/เหยื่อหมด";
 
                     const safeNotes = record.notes ? record.notes.replace(/,/g, " ") : "";
-                    csvContent += `${i},${zoneLabel},${statusTxt},${record.ratsCount},${record.inspector},${record.timestamp},${safeNotes}\n`;
+                    csvContent += `${i},${zoneLabel},${statusTxt},${record.ratsCount},${record.inspector},${record.nodeId || '-'},${record.timestamp},${safeNotes}\n`;
                 } else {
-                    csvContent += `${i},${zoneLabel},ยังไม่ได้ตรวจเช็ค,0,-,-,-\n`;
+                    csvContent += `${i},${zoneLabel},ยังไม่ได้ตรวจเช็ค,0,-,-,-,-\n`;
                 }
             }
 
@@ -1825,15 +1980,17 @@
 
         dateInput.addEventListener('change', () => {
             loadLocalInspections();
-            showToast("สลับวันที่ข้อมูล", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
+            showToast("สลับวันที่ข้อมูล DEMO", `แสดงรายงานของวันที่ ${dateInput.value}`, "emerald");
         });
 
         window.onload = () => {
+            renderStaffDropdowns();
+            document.getElementById('lblUserNode').innerText = activeNodeId;
             loadLocalInspections();
             
             document.getElementById('btnSync').addEventListener('click', () => {
                 loadLocalInspections();
-                showToast("อัปเดตแล้ว (Offline Demo)", "ข้อมูลได้รับการดึงจากหน่วยความจำเรียบร้อย", "emerald");
+                showToast("อัปเดตข้อมูลแล้ว (DEMO)", "ดึงข้อมูลสถิติล่าสุดเรียบร้อย", "emerald");
             });
         };
     </script>
