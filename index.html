@@ -56,7 +56,6 @@
 </head>
 <body class="h-full text-slate-100 flex flex-col antialiased">
 
-    <!-- Top Header Navigation -->
     <header class="bg-slate-800/90 border-b border-slate-700/50 sticky top-0 z-40 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
@@ -119,7 +118,6 @@
         </div>
     </header>
 
-    <!-- Main Content Grid Area -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 overflow-y-auto">
         
         <!-- Live Statistics Grid Cards -->
@@ -189,7 +187,6 @@
 
         </div>
 
-        <!-- Tabbed Navigation / Filter Control -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-800/40 p-4 rounded-2xl border border-slate-700/30">
             <!-- Filter categories -->
             <div class="flex flex-wrap gap-2 w-full sm:w-auto">
@@ -223,7 +220,6 @@
             </div>
         </div>
 
-        <!-- Dashboard Layout Split -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             <!-- Interactive Visual Grid Map of 63 Traps (Left Area) -->
@@ -298,7 +294,6 @@
 
             </section>
 
-            <!-- Dashboard Widgets, Analytics Chart, and Log Area -->
             <section class="lg:col-span-5 flex flex-col gap-6">
 
                 <div class="bg-slate-800/30 rounded-3xl p-5 border border-slate-800 shadow-xl">
@@ -350,7 +345,6 @@
         </div>
     </main>
 
-    <!-- Modal: Executive Summary & Automated Workflows Dashboard -->
     <div id="modalSummaryDashboard" class="fixed inset-0 z-50 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/85 backdrop-blur-md transition-opacity no-print" onclick="closeSummaryDashboardModal()"></div>
@@ -539,7 +533,6 @@
         </div>
     </div>
 
-    <!-- Modal: Individual Inspection Report Form -->
     <div id="modalInspection" class="fixed inset-0 z-50 overflow-y-auto hidden" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity" onclick="closeInspectionModal()"></div>
@@ -573,7 +566,7 @@
                             </span>
                             <!-- LOCKED DROPDOWN SELECT TO PREVENT MALICIOUS / INCORRECT NAMES -->
                             <select id="formInspector" required 
-                                    class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-rose-500 focus:border-rose-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 text-sm focus:outline-none transition-all">
+                                    class="bg-slate-900 border border-slate-700 rounded-xl focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-10 pr-3 py-2.5 text-slate-100 text-sm focus:outline-none transition-all">
                                 <option value="" disabled selected>-- กรุณาเลือกรายชื่อพนักงาน --</option>
                             </select>
                         </div>
@@ -872,15 +865,14 @@
         </div>
     </div>
 
-    <!-- Firebase Web SDK Modular import & Application Core Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection, query, where, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Firebase Configuration (Replace with actual Firebase Credentials)
+        // IMPORTANT: Replace this with your actual Firebase project config credentials from Firebase Console
         const firebaseConfig = {
-            apiKey: "AIzaSyCxXXXXXX...",
+            apiKey: "AIzaSyCxXXXXXX...", // Replace XXXXXX with your real API Key
             authDomain: "your-project-id.firebaseapp.com",
             projectId: "your-project-id",
             storageBucket: "your-project-id.appspot.com",
@@ -927,7 +919,6 @@
         let activeSummaryRange = 'LAST_7';
         let currentMaintenanceWorkOrdersText = "";
 
-        // Dynamic Staff List State (Default sample names for initial boot)
         const DEFAULT_STAFF = ["สมชาย เจริญสุข", "วรรณิภา มั่นคง", "อนันต์ ยอดรักษ์", "ปิยะพงษ์ เลิศวิไล", "กิตติศักดิ์ ศรีสุข"];
         let staffList = JSON.parse(localStorage.getItem(`staff_list_${appId}`)) || DEFAULT_STAFF;
 
@@ -1017,7 +1008,6 @@
             `).join('');
         };
 
-        // Date Handling (Buddhist Era BE to Gregorian AD normalizer)
         const getLocalDateString = (d = new Date()) => {
             let year = d.getFullYear();
             if (year > 2400) year -= 543; // BE to AD
@@ -1081,7 +1071,6 @@
             document.getElementById('photoPreviewContainer').classList.add('hidden');
         };
 
-        // Supervisor PIN Verification Logic
         window.requestSupervisorPin = (actionCallback) => {
             pendingPinAction = actionCallback;
             document.getElementById('pinInput').value = '';
@@ -1108,7 +1097,6 @@
             }
         };
 
-        // Dynamic Change PIN Modal Logic
         window.openChangePinModal = () => {
             document.getElementById('oldPinInput').value = '';
             document.getElementById('newPinInput').value = '';
@@ -2047,7 +2035,7 @@
         const initializeRealtimeDatabase = async () => {
             try {
                 if (!firebaseConfig.apiKey || firebaseConfig.apiKey.includes("XXXXXX")) {
-                    throw new Error("Missing real Firebase config");
+                    throw new Error("Missing real Firebase config key");
                 }
 
                 firebaseApp = initializeApp(firebaseConfig);
